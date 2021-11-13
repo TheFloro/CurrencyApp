@@ -8,8 +8,13 @@ import { RootTabScreenProps } from '../types';
 
 export default function TabOneScreen(props: any, navigation: RootTabScreenProps<'TabOne'>) {
 
+  const [sortCurrency, setSortCurrency] = useState(true);
+  const [sortPrice, setSortPrice] = useState(true);
+  const [sortChange, setSortChange] = useState(true);
+
   const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState({});
+  //const [data, setData] = useState({});
+  const [data, setData] = useState<any>([]);
 
   // const array = data.split(',');
   // console.log(array);
@@ -166,19 +171,25 @@ export default function TabOneScreen(props: any, navigation: RootTabScreenProps<
     }
   }
 
+  
   const baseCurrency: any = thirdObject.base_currency;
 
   const array: any = [];
-  for (const [id, value] of Object.entries(anotherObject)) {
-    array.push({ id, value })
-  }
-  //console.log(array, baseCurrency);
+  
+
+  useEffect(() => {
+    for (const [id, value] of Object.entries(anotherObject)) {
+      array.push({ id, value })
+    }
+    setData(array)
+    console.log(data);
+  },[])
 
 
   // const [newInfo, setNewInfo] = useState({});
-  //                                                               //historical of base USD
+  //                                                               //historical of base USD //i changed it to PLN in Link - hopes it works
   //   useEffect(() => {
-  //   fetch('https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=USD&date_from=2020-10-01&date_to=2021-11-12')
+  //   fetch('https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=PLN&date_from=2020-10-01&date_to=2021-11-12')
   //   .then((response) => response.json())
   //   .then(json => {
   //     console.log(json.data);
@@ -190,8 +201,7 @@ export default function TabOneScreen(props: any, navigation: RootTabScreenProps<
 
 
 
-
-                                                                  //normal fetch
+  //normal fetch
   // useEffect(() => {
   //   fetch('https://freecurrencyapi.net/api/v2/latest?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3')
   //   .then((response) => response.json())
@@ -204,6 +214,46 @@ export default function TabOneScreen(props: any, navigation: RootTabScreenProps<
   // }, []);
 
 
+  //console.log(array.sort(function(a:any,b:any) { return b.value - a.value }));
+
+  const sortByPrice = () => {
+    if (sortPrice) {
+      data.sort(function (a: any, b: any) { return b.value - a.value })
+      setSortPrice(false);
+    } else {
+      data.sort(function (a: any, b: any) { return a.value - b.value })
+      setSortPrice(true);
+    }
+  }
+
+  const sortByCurrency = () => {
+    if (sortCurrency) {
+      data.sort((a:any, b:any) => {
+        if ( a.id < b.id ) return -1;
+        return a.id > b.id ? 1 : 0;
+      });
+      setSortCurrency(false);
+    } else {
+      data.sort((a:any, b:any) => {
+        if ( a.id > b.id ) return -1;
+        return a.id < b.id ? 1 : 0;
+      });
+      setSortCurrency(true);
+    }
+  }
+
+  //console.log(array);
+
+  // const sortByChange = () => {
+  //   if (sortChange){
+  //     array.sort(function(a:any,b:any) { return b.value - a.value })
+  //   setSortChange(false);
+  //   } else {
+  //     array.sort(function(a:any,b:any) { return a.value - b.value })
+  //     setSortChange(true);
+  //   }
+  //   }
+
 
 
   return (
@@ -212,13 +262,30 @@ export default function TabOneScreen(props: any, navigation: RootTabScreenProps<
       <View style={styles.titlesContainer}>
         <View>
           <Pressable
-            onPress={() => { }}
+            onPress={sortByCurrency}
             style={({ pressed }) => ({
               opacity: pressed ? 0.5 : 1,
               flexDirection: 'row',
-              alignItems:'center'
+              alignItems: 'center'
             })}>
-              <Text style={styles.title}>Currency</Text>
+            <Text style={styles.title}>Currency</Text>
+            <FontAwesome
+              name="sort"
+              size={15}
+              color='grey'
+              style={{}}
+            />
+          </Pressable>
+        </View>
+        <View>
+          <Pressable
+            onPress={sortByPrice}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.5 : 1,
+              flexDirection: 'row',
+              alignItems: 'center'
+            })}>
+            <Text style={styles.title}>Price</Text>
             <FontAwesome
               name="sort"
               size={15}
@@ -233,26 +300,9 @@ export default function TabOneScreen(props: any, navigation: RootTabScreenProps<
             style={({ pressed }) => ({
               opacity: pressed ? 0.5 : 1,
               flexDirection: 'row',
-              alignItems:'center'
+              alignItems: 'center'
             })}>
-              <Text style={styles.title}>Price</Text>
-            <FontAwesome
-              name="sort"
-              size={15}
-              color='grey'
-              style={{}}
-            />
-          </Pressable>
-        </View>
-        <View>
-          <Pressable
-            onPress={() => { }}
-            style={({ pressed }) => ({
-              opacity: pressed ? 0.5 : 1,
-              flexDirection: 'row',
-              alignItems:'center'
-            })}>
-              <Text style={styles.title}>24h Change</Text>
+            <Text style={styles.title}>24h Change</Text>
             <FontAwesome
               name="sort"
               size={15}
@@ -265,14 +315,14 @@ export default function TabOneScreen(props: any, navigation: RootTabScreenProps<
       <View>
         <View style={{ marginBottom: 30 }}>
           <FlatList
-            data={array}
-            keyExtractor={({ id }, index) => id}
-            renderItem={({ item, index }) => (
+            data={data}
+            keyExtractor={({ id }) => id}
+            renderItem={({ item }) => (
               <CurrencyItemOnMain
-              navigation={props.navigation}
-              id={item.id}
-              baseCurrency={baseCurrency}
-              value={item.value}
+                navigation={props.navigation}
+                id={item.id}
+                baseCurrency={baseCurrency}
+                value={item.value}
               //percentage
               >
                 {/* <View style={styles.currency}>
@@ -310,5 +360,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgreen',
     marginHorizontal: 5
   },
-  
+
 });

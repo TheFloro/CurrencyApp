@@ -155,7 +155,7 @@ const ParticularCurrency = (props: any) => {
                 "AED": 3.5632
             },
             "2020-10-03": thirdObject = {
-                "AED:": 3.3454
+                "AED": 3.3454
             },
         }
     }
@@ -168,8 +168,6 @@ const ParticularCurrency = (props: any) => {
     const historicalDataTotal: any = [];
 
     historicalData.every((item: any) => historicalDataTotal.push(item.value[currencyId]));
-
-    historicalData.find((item: any) => console.log(item.value[currencyId]));
 
     const numColumns = 10;
 

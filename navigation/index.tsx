@@ -7,7 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { ColorSchemeName, Pressable, View } from 'react-native';
 
 import Colors from '../constants/Colors';
@@ -47,24 +47,33 @@ function RootNavigator() {
         headerTitleAlign: 'center',
         headerTitleStyle: { fontSize: 25 },
         headerStyle: {
-            backgroundColor: 'green'
+          backgroundColor: 'green'
         },
         title: 'More Info',
         headerRight: () => (
           <Pressable
-                onPress={() => {color ? setColor(false) : setColor(true)}}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.5 : 1,
-                })}>
-                <FontAwesome
-                  name="star"
-                  size={25}
-                  color= {color ? 'gold' : 'white'}
-                  style={{ marginRight: 15 }}
-                />
-              </Pressable>
+            onPress={() => { color ? setColor(false) : setColor(true) }}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.5 : 1,
+            })}>
+            {color ?
+              <FontAwesome
+                name="eye"
+                size={25}
+                color='blue'
+                style={{ marginRight: 15 }}
+              />
+              :
+              <FontAwesome
+                name="eye-slash"
+                size={25}
+                color='lightgrey'
+                style={{ marginRight: 15 }}
+              />
+            }
+          </Pressable>
         )
-    }}/>
+      }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -108,7 +117,7 @@ function BottomTabNavigator() {
                   opacity: pressed ? 0.5 : 1,
                 })}>
                 <FontAwesome
-                  name="filter"
+                  name="exchange"
                   size={25}
                   color='white'
                   style={{ marginRight: 25 }}
@@ -135,7 +144,7 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: 'Observable',
-          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={'gold'} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="eye" color={'blue'} />,
         }}
       />
     </BottomTab.Navigator>
