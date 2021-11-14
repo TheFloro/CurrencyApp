@@ -2,21 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const CurrencyItemOnMain = (props: any) => {
-    const [positive, setPositive] = useState(true);
-    const random = (Math.random() * (1 - 5) + 1);
-    const randomFixed = random.toFixed(2);
-
-    useEffect(() => {
-        if (random > 0){
-            setPositive(true);
-        } else {
-            setPositive(false);
-        }
-    }, [random])
-
+    const [positive, setPositive] = useState(props.positive);
+    //setPositive(props.positive)
     return (
         <TouchableOpacity onPress={() => {
-           // console.log(props.children[0]._owner.key)
+            // console.log(props.children[0]._owner.key)
             //console.log(props.children[1].props.children.props.children)
             // props.navigation.navigate('ParticularCurrency',{
             //     screen: 'ParticularCurrency',
@@ -41,7 +31,7 @@ const CurrencyItemOnMain = (props: any) => {
                     <Text style={styles.itemText}>{props.value}</Text>
                 </View>
                 <View style={positive ? styles.change : styles.changeNegative}>
-                    <Text style={styles.itemText}>{randomFixed}</Text>
+                    <Text style={styles.changeText}>{props.change}%</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -62,29 +52,32 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
-      },
-      currency: {
+    },
+    currency: {
         width: '30%',
-        flexDirection:'row'
-      },
-      price: {
+        flexDirection: 'row'
+    },
+    price: {
         width: '40%'
-      },
-      change: {
+    },
+    change: {
         width: '20%',
         borderColor: 'green',
         borderWidth: 5,
         alignItems: 'center'
-      },
-      changeNegative:{
+    },
+    changeNegative: {
         width: '20%',
         borderColor: 'red',
         borderWidth: 5,
         alignItems: 'center'
-      },
-      itemText: {
+    },
+    itemText: {
         fontSize: 18
-      }
+    },
+    changeText: {
+        fontSize: 15
+    }
 });
 
 export default CurrencyItemOnMain;
