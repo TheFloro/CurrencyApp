@@ -1,35 +1,69 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { getDate } from '../components/getDate';
 import NotificationButton from '../components/NotificationButton';
 import ParticularCurrencyInfo from '../components/ParticularCurrencyInfo';
 import { useStore } from '../store/store';
+import { LineChart } from 'react-native-chart-kit';
 
 const ParticularCurrency = (props: any) => {
     const { currencyId, baseCurrency, currentValue } = props.route.params.params;
     const { someStore } = useStore();
     const lastDaysPrices = [...someStore.changingDataForLastDays(currencyId)];
-    const numColumns = lastDaysPrices.length;
 
     const lowestDropPrice = Math.min(...lastDaysPrices);
     const highestPicPrice = Math.max(...lastDaysPrices);
     //[0] is *days ago, [length-1] is current
     const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[0]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[0])).toFixed(8)
+    const dates = someStore.tenlastDaysData.map((item: any) => item.data)
 
     return (
         <View style={styles.container}>
             <View style={styles.graph}>
-                <FlatList
-                    numColumns={numColumns}
-                    style={{ margin: 5 }}
-                    data={lastDaysPrices}
-                    keyExtractor={item => item}
-                    renderItem={({ item, index }) => (
-                        <View style={{ margin: 2 }}>
-                            <Text>{item}</Text>
-                        </View>
-                    )}
-                />
+                <View>
+                    <LineChart
+                        data={{
+                            labels: dates, //["January", "February", "March", "April", "May", "June"]
+                            datasets: [
+                                {
+                                    data: lastDaysPrices
+                                }
+                            ]
+                        }}
+                        
+                        width={Dimensions.get("window").width} // from react-native
+                        height={Dimensions.get("window").height/3}
+                        yAxisLabel="" //symbol of currency
+                        yAxisSuffix="" //amount of smth
+                        yAxisInterval={1} // optional, defaults to 1
+                        verticalLabelRotation={-55}
+                        chartConfig={{ 
+                            backgroundColor: "green",
+                            backgroundGradientFrom: "grey",
+                            backgroundGradientTo: "#A2D3C2",
+                            decimalPlaces: 2, // optional, defaults to 2dp
+                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                            style: {
+                                // borderRadius: 16
+                            },
+                            propsForDots: {
+                                r: "5",
+                                strokeWidth: "3",
+                                stroke: "orange"
+
+                            },
+                            
+                           
+                        }}
+
+                        //bezier
+                        style={{
+                            // marginVertical: 8,
+                            // borderRadius: 16
+                        }}
+                    />
+                </View>
             </View>
             <View style={styles.moreInfoContainer}>
                 <View style={styles.titleContainer}>
@@ -40,28 +74,28 @@ const ParticularCurrency = (props: any) => {
                         <ParticularCurrencyInfo
                             titleText='Highest Pick'
                             insideText={highestPicPrice}
-                            style={{backgroundColor: 'black', color:'green'}}
+                            style={{ backgroundColor: 'black', color: 'green' }}
                             margin={{}}
                         />
                         <ParticularCurrencyInfo
                             titleText='Lowest Drop'
                             insideText={lowestDropPrice}
-                            style={{backgroundColor: 'black', color:'red'}}
+                            style={{ backgroundColor: 'black', color: 'red' }}
                             margin={{}}
                         />
                     </View>
                     <View style={styles.percentageContainer}>
-                    <ParticularCurrencyInfo
+                        <ParticularCurrencyInfo
                             titleText='Current'
                             insideText={currentValue}
-                            style={{backgroundColor: 'black', color:'white'}}
+                            style={{ backgroundColor: 'black', color: 'white' }}
                             margin={{}}
                         />
                         <ParticularCurrencyInfo
                             titleText='Percent'
                             insideText={percantageChange}
                             addicionalSymbol='%'
-                            style={{backgroundColor: 'black', color:'#80A1D4'}}
+                            style={{ backgroundColor: 'black', color: '#80A1D4' }}
                             margin={{}}
                         />
                     </View>
@@ -81,17 +115,18 @@ const styles = StyleSheet.create({
     },
     graph: {
         flex: 1,
-        borderWidth: 3,
-        borderColor: 'black',
-        marginTop: 5,
-        marginHorizontal: 5
+        // borderWidth: 3,
+        // borderColor: 'black',
+        // marginTop: 5,
+        // marginHorizontal: 5
     },
     moreInfoContainer: {
         flex: 2,
         backgroundColor: 'darkgreen'
     },
     titleContainer: {
-        borderWidth: 3,
+        borderTopWidth: 3,
+        borderBottomWidth: 3,
         borderColor: 'black',
         height: 50,
         justifyContent: 'center',
