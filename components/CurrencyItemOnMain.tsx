@@ -6,19 +6,12 @@ const CurrencyItemOnMain = (props: any) => {
     //setPositive(props.positive)
     return (
         <TouchableOpacity onPress={() => {
-            // console.log(props.children[0]._owner.key)
-            //console.log(props.children[1].props.children.props.children)
-            // props.navigation.navigate('ParticularCurrency',{
-            //     screen: 'ParticularCurrency',
-            //     params: {
-            //         currencyId: props.children[0]._owner.key,
-            //     }
-            // })
             props.navigation.navigate('ParticularCurrency', {
                 screen: 'ParticularCurrency',
                 params: {
                     currencyId: props.id,
-                    baseCurrency: props.baseCurrency
+                    baseCurrency: props.baseCurrency,
+                    currentValue: props.value
                 }
             })
         }}>

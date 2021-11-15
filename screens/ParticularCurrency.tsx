@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 
 const ParticularCurrency = (props: any) => {
-    const { currencyId, baseCurrency } = props.route.params.params;
-
+    const { currencyId, baseCurrency, currentValue } = props.route.params.params;
+    console.log(props);
     let secondObject;
     let thirdObject;
 
@@ -204,7 +204,7 @@ const ParticularCurrency = (props: any) => {
                     <View style={styles.percentageContainer}>
                         <View style={styles.percentage}>
                             <Text style={{ ...styles.moreInfoTitles, ...styles.text }}>Current</Text>
-                            <Text style={styles.text}>3.5632</Text>
+                            <Text style={styles.text}>{currentValue}</Text>
                         </View>
                         <View style={styles.percentage}>
                             <Text style={{ ...styles.moreInfoTitles, ...styles.text }}>Percentage</Text>
