@@ -9,7 +9,11 @@ export default class SomeStore {
     yesterdayData: any = [];
     dataToDisplay: any = [];
 
+    // toggleModal: boolean = false;
 
+    // changeToggleModal(){
+    //     this.toggleModal ? this.toggleModal = false : this.toggleModal = true;
+    // }
     
     tenlastDaysData: any = [];
 

@@ -17,6 +17,7 @@ import NotFoundScreen from '../screens/NotFoundScreen';
 import ParticularCurrency from '../screens/ParticularCurrency';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
+import { useStore } from '../store/store';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -74,8 +75,8 @@ function RootNavigator() {
           </Pressable>
         )
       }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
+      <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
+        <Stack.Screen name="Modal" component={ModalScreen} options={{headerShown: false}} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -88,6 +89,7 @@ function RootNavigator() {
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
+  const {someStore} = useStore();
   const colorScheme = useColorScheme();
 
   return (
@@ -112,7 +114,7 @@ function BottomTabNavigator() {
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
               <Pressable
-                onPress={() => { }}
+                onPress={() => {}}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
                 })}>

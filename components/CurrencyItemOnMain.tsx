@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#F4F9E9'
     },
     itemOnMainContainer: {
         flexDirection: 'row',
@@ -57,19 +58,22 @@ const styles = StyleSheet.create({
         width: '20%',
         borderColor: 'green',
         borderWidth: 5,
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: 'green'
     },
     changeNegative: {
         width: '20%',
         borderColor: 'red',
         borderWidth: 5,
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: 'red'
     },
     itemText: {
         fontSize: 18
     },
     changeText: {
-        fontSize: 15
+        fontSize: 15,
+        color: 'white'
     }
 });
 

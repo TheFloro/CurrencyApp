@@ -8,6 +8,7 @@ import { useStore } from '../store/store';
 import TitleToSortBy from '../components/TitleToSortBy';
 import { observer } from 'mobx-react-lite';
 import { getDate } from '../components/getDate';
+import ModalScreen from './ModalScreen';
 
 const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
 
@@ -41,7 +42,8 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
     someStore.yesterdayDataCurrencies(someStore.twoDayCurrencies[0][1])
     someStore.dataToDisplayFunction();
   }
-
+  //why doesn't it work without it???
+  //someStore.toggleModal
 
   const sortByPrice = () => {
     if (sortPrice) {
@@ -101,6 +103,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
       <View>
         <View style={{ marginBottom: 30 }}>
           <FlatList
+            style={{ backgroundColor: 'lightblue' }}
             data={someStore.dataToDisplay}
             keyExtractor={({ id }) => id}
             renderItem={({ item }) => (
@@ -125,12 +128,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 5
+    paddingVertical: 5,
+    backgroundColor: 'lightblue'
   },
   titlesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 5,
+    backgroundColor: 'lightblue'
   },
 });
 
