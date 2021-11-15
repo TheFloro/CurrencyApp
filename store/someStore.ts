@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { Alert } from "react-native";
 
 export default class SomeStore {
     data: any = []; //it hold baseCurrency as key also
@@ -7,6 +8,10 @@ export default class SomeStore {
     todayData: any = [];
     yesterdayData: any = [];
     dataToDisplay: any = [];
+
+
+    
+    tenlastDaysData: any = [];
 
     constructor() {
         makeAutoObservable(this)
@@ -19,19 +24,40 @@ export default class SomeStore {
                 .then((json) => this.data = { data: json.data, baseCurrency: json.query.base_currency })
             //console.log(this.data, 'this.data in someStore')
         } catch (e) {
-            throw e;
+            Alert.alert("I am so sorry, data of currency couldn't be fetched");
         }
     }
 
-    async fetchingDataByHistory(currency: string, dateFrom: string, dateTo: string) {
+    async fetchingDataByYesterday(currency: string, dateFrom: string, dateTo: string) {
         try {
             await fetch(`https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=${currency}&date_from=${dateFrom}&date_to=${dateTo}`)
                 .then((response) => response.json())
                 .then(json => this.historyData = (json.data))
             //console.log(this.historyData, 'historyData')
         } catch (e) {
-            throw e;
+            Alert.alert("I am so sorry, data of yesterday couldn't be fetched");
         }
+    }
+    async fetchingDataOfTenLastDays(currency: string, dateFrom: string, dateTo: string) {
+        try {
+            await fetch(`https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=${currency}&date_from=${dateFrom}&date_to=${dateTo}`)
+                .then((response) => response.json())
+                .then(json => {
+                    for (const [data, value] of Object.entries(json.data)) {
+                        this.tenlastDaysData.push({ data, value })
+                    }
+                })
+            //console.log(this.tenlastDaysData, 'tenLastDaysData')
+        } catch (e) {
+            Alert.alert("I am so sorry, data of last days couldn't be fetched");
+        }
+    }
+
+    changingDataForLastDays(currencyId: string) {
+        const historicalDataTotal: any = [];
+
+        this.tenlastDaysData.every((item: any) => historicalDataTotal.push(item.value[currencyId]));
+        return historicalDataTotal;
     }
 
     async todayDataCurrencies(object: any) {
