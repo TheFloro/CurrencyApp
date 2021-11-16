@@ -13,7 +13,7 @@ const ParticularCurrency = (props: any) => {
 
     const lowestDropPrice = Math.min(...lastDaysPrices);
     const highestPicPrice = Math.max(...lastDaysPrices);
-    //[0] is *days ago, [length-1] is current
+    //[0] is Xdays ago, [length-1] is current
     const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[0]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[0])).toFixed(8)
     const dates = someStore.tenlastDaysData.map((item: any) => item.data)
 
@@ -23,19 +23,18 @@ const ParticularCurrency = (props: any) => {
                 <View>
                     <LineChart
                         data={{
-                            labels: dates, //["January", "February", "March", "April", "May", "June"]
+                            labels: dates,
                             datasets: [
                                 {
                                     data: lastDaysPrices
                                 }
                             ]
                         }}
-                        
-                        width={Dimensions.get("window").width} // from react-native
+                        width={Dimensions.get("window").width}
                         height={Dimensions.get("window").height/3}
-                        yAxisLabel="" //symbol of currency
-                        yAxisSuffix="" //amount of smth
-                        yAxisInterval={1} // optional, defaults to 1
+                        yAxisLabel=""
+                        yAxisSuffix=""
+                        yAxisInterval={1}
                         verticalLabelRotation={-55}
                         chartConfig={{ 
                             backgroundColor: "green",
@@ -43,7 +42,7 @@ const ParticularCurrency = (props: any) => {
                             backgroundGradientTo: "#A2D3C2",
                             decimalPlaces: 2, // optional, defaults to 2dp
                             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                            labelColor: (opacity = 1) => `rgba(25, 0, 0, ${opacity})`,
                             style: {
                                 // borderRadius: 16
                             },
@@ -53,14 +52,9 @@ const ParticularCurrency = (props: any) => {
                                 stroke: "orange"
 
                             },
-                            
-                           
                         }}
-
-                        //bezier
                         style={{
-                            // marginVertical: 8,
-                            // borderRadius: 16
+                            paddingRight: 50
                         }}
                     />
                 </View>

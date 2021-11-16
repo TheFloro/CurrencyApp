@@ -43,7 +43,11 @@ function RootNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Screen name="ParticularCurrency" component={ParticularCurrency} options={{
+      <Stack.Screen
+        name="ParticularCurrency"
+        component={ParticularCurrency}
+        options={({ navigation }: RootTabScreenProps<'ParticularCurrency'>) => ({
+        headerBackVisible: false,
         headerTintColor: 'white',
         headerTitleAlign: 'center',
         headerTitleStyle: { fontSize: 25 },
@@ -73,10 +77,27 @@ function RootNavigator() {
               />
             }
           </Pressable>
+        ),
+        headerLeft: () => (
+          <Pressable
+            onPress={() => { navigation.navigate('TabOne')}}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.5 : 1,
+              width: 50,
+              alignItems: 'center'
+            })}>
+            <FontAwesome
+              name="angle-left"
+              size={25}
+              color='white'
+              style={{}}
+            />
+          </Pressable>
         )
-      }} />
+      })} 
+      />
       <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} options={{headerShown: false}} />
+        <Stack.Screen name="Modal" component={ModalScreen} options={{ headerShown: false }} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -89,7 +110,7 @@ function RootNavigator() {
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
-  const {someStore} = useStore();
+  const { someStore } = useStore();
   const colorScheme = useColorScheme();
 
   return (
@@ -114,7 +135,7 @@ function BottomTabNavigator() {
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
               <Pressable
-                onPress={() => {}}
+                onPress={() => { }}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
                 })}>

@@ -8,7 +8,7 @@ const ModalScreen = (props: any) => {
   const ids = someStore.dataToDisplay.map((item: any) => item.id);
   const isEverythingAlright: boolean = ids.includes(selectedValue)
 
-  const arrr = someStore.dataToDisplay.find((item: any) => item.id === 'AED')
+  const arrr = someStore.dataToDisplay.find((item: any) => item.id === selectedValue)
 
   const checkForCurrency = () => {
     props.navigation.navigate('ParticularCurrency', {
@@ -47,13 +47,14 @@ const ModalScreen = (props: any) => {
           }
           <View style={{ flexDirection: 'row', width: 250, justifyContent: 'space-between' }}>
             <Pressable
-              style={[styles.button, styles.buttonClose, { backgroundColor: '#D64933' }]}
+              style={[styles.button, styles.buttonEnabled, { backgroundColor: '#D64933' }]}
               onPress={() => props.navigation.goBack()}
             >
               <Text style={styles.textStyle}>Close</Text>
             </Pressable>
             <Pressable
-              style={[styles.button, styles.buttonClose]}
+              style={isEverythingAlright ? [styles.button, styles.buttonEnabled] : [styles.button, styles.buttonDissabled]}
+              disabled={!isEverythingAlright}
               onPress={() => {
                 checkForCurrency()
             }}>
@@ -75,9 +76,9 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#6AB547",
+    backgroundColor: "#2b4162", //313d5a //344966
     borderRadius: 20,
-    padding: 35,
+    padding: 25,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -94,8 +95,11 @@ const styles = StyleSheet.create({
     elevation: 2,
     width: 100,
   },
-  buttonClose: {
+  buttonEnabled: {
     backgroundColor: "#58A4B0",
+  },
+  buttonDissabled:{
+    backgroundColor: "lightgrey",
   },
   textStyle: {
     color: "white",
@@ -117,7 +121,8 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   errorMessage: {
-    color: 'red'
+    color: 'red',
+    marginBottom: 10
   }
 });
 

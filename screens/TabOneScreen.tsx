@@ -19,6 +19,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
   const [sortChange, setSortChange] = useState(true);
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  //const [testFetching, setTestFetching] = useState([]);
 
   //here i have to make it async so it can make array after fetching
   useEffect(() => {
@@ -26,6 +27,15 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
       initialDataLoader();
       setIsDataLoaded(true);
     };
+    
+    // const testFetch = async () => {
+    //   const response = await fetch('https://freecurrencyapi.net/api/v2/latest?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=PLN');
+    //   const fetchedTest = await response.json();
+    //   setTestFetching(fetchedTest);
+    //   console.log('test in fucntion', testFetching)
+    // }
+    // testFetch();
+    
 
     //console.log(someStore.data.data, 'just checking');
   }, [])
@@ -42,8 +52,8 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
     someStore.yesterdayDataCurrencies(someStore.twoDayCurrencies[0][1])
     someStore.dataToDisplayFunction();
   }
-  //why doesn't it work without it???
-  //someStore.toggleModal
+
+  
 
   const sortByPrice = () => {
     if (sortPrice) {
@@ -100,7 +110,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
           icon='sort'
         />
       </View>
-      <View>
+      <View style={{backgroundColor: 'lightblue'}}>
         <View style={{ marginBottom: 30 }}>
           <FlatList
             style={{ backgroundColor: 'lightblue' }}
