@@ -39,6 +39,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const [color, setColor] = useState(false);
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
@@ -46,7 +47,7 @@ function RootNavigator() {
       <Stack.Screen
         name="ParticularCurrency"
         component={ParticularCurrency}
-        options={({ navigation }: RootTabScreenProps<'ParticularCurrency'>) => ({
+        options={({ navigation, route }: RootTabScreenProps<'ParticularCurrency'>) => ({
         headerBackVisible: false,
         headerTintColor: 'white',
         headerTitleAlign: 'center',
@@ -55,29 +56,20 @@ function RootNavigator() {
           backgroundColor: 'green'
         },
         title: 'More Info',
-        headerRight: () => (
-          <Pressable
-            onPress={() => { color ? setColor(false) : setColor(true) }}
-            style={({ pressed }) => ({
-              opacity: pressed ? 0.5 : 1,
-            })}>
-            {color ?
-              <FontAwesome
-                name="eye"
-                size={25}
-                color='blue'
-                style={{ marginRight: 15 }}
-              />
-              :
-              <FontAwesome
-                name="eye-slash"
-                size={25}
-                color='lightgrey'
-                style={{ marginRight: 15 }}
-              />
-            }
-          </Pressable>
-        ),
+        // headerRight: () => (
+        //   <Pressable
+        //     onPress={() => { console.log(navigation, route) }}
+        //     style={({ pressed }) => ({
+        //       opacity: pressed ? 0.5 : 1,
+        //     })}>
+        //       <FontAwesome
+        //         name={color ? "eye" : "eye-slash"}
+        //         size={25}
+        //         color={color ? 'blue' : 'lightgrey'}
+        //         style={{ marginRight: 15 }}
+        //       />
+        //   </Pressable>
+        // ),
         headerLeft: () => (
           <Pressable
             onPress={() => { navigation.navigate('TabOne')}}

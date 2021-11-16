@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
-import { getDate } from '../components/getDate';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions, Pressable } from 'react-native';
 import NotificationButton from '../components/NotificationButton';
 import ParticularCurrencyInfo from '../components/ParticularCurrencyInfo';
 import { useStore } from '../store/store';
 import { LineChart } from 'react-native-chart-kit';
+import { FontAwesome } from '@expo/vector-icons';
+import { observer } from 'mobx-react-lite';
 
 const ParticularCurrency = (props: any) => {
     const { currencyId, baseCurrency, currentValue } = props.route.params.params;
@@ -15,7 +16,30 @@ const ParticularCurrency = (props: any) => {
     const highestPicPrice = Math.max(...lastDaysPrices);
     //[0] is Xdays ago, [length-1] is current
     const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[0]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[0])).toFixed(8)
-    const dates = someStore.tenlastDaysData.map((item: any) => item.data)
+    const dates = someStore.allInfoData.data.map((item: any) => item.date)
+
+    const currentCurrencyIsObservated = someStore.observatedCurrency.some((currency: any) => currency.id === currencyId)
+
+    
+
+    useEffect(() => {
+        props.navigation.setOptions({
+            headerRight: () => (
+                <Pressable
+                  onPress={() => {someStore.toggleObservatedCurrency(currencyId)}}
+                  style={({ pressed }) => ({
+                    opacity: pressed ? 0.5 : 1,
+                  })}>
+                    <FontAwesome
+                      name={currentCurrencyIsObservated ? "eye" : "eye-slash"}
+                      size={25}
+                      color={currentCurrencyIsObservated ? 'blue' : 'lightgrey'}
+                      style={{ marginRight: 15 }}
+                    />
+                </Pressable>
+              )
+        })
+    }, [currentCurrencyIsObservated])
 
     return (
         <View style={styles.container}>
@@ -50,7 +74,6 @@ const ParticularCurrency = (props: any) => {
                                 r: "5",
                                 strokeWidth: "3",
                                 stroke: "orange"
-
                             },
                         }}
                         style={{
@@ -86,7 +109,7 @@ const ParticularCurrency = (props: any) => {
                             margin={{}}
                         />
                         <ParticularCurrencyInfo
-                            titleText='Percent'
+                            titleText='Percent 24h'
                             insideText={percantageChange}
                             addicionalSymbol='%'
                             style={{ backgroundColor: 'black', color: '#80A1D4' }}
@@ -158,4 +181,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ParticularCurrency;
+export default observer(ParticularCurrency);

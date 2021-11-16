@@ -8,7 +8,6 @@ import { useStore } from '../store/store';
 import TitleToSortBy from '../components/TitleToSortBy';
 import { observer } from 'mobx-react-lite';
 import { getDate } from '../components/getDate';
-import ModalScreen from './ModalScreen';
 
 const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
 
@@ -19,41 +18,14 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
   const [sortChange, setSortChange] = useState(true);
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  //const [testFetching, setTestFetching] = useState([]);
+  const [testFetching, setTestFetching] = useState([]);
 
-  //here i have to make it async so it can make array after fetching
   useEffect(() => {
     if (!isDataLoaded) {
-      initialDataLoader();
+      someStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
       setIsDataLoaded(true);
-    };
-    
-    // const testFetch = async () => {
-    //   const response = await fetch('https://freecurrencyapi.net/api/v2/latest?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=PLN');
-    //   const fetchedTest = await response.json();
-    //   setTestFetching(fetchedTest);
-    //   console.log('test in fucntion', testFetching)
-    // }
-    // testFetch();
-    
-
-    //console.log(someStore.data.data, 'just checking');
+    }
   }, [])
-
-  const initialDataLoader = async () => {
-    await someStore.fetchingDataByCurrency();
-    await someStore.fetchingDataByYesterday('PLN', getDate(1), getDate(0));
-    await someStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
-
-
-    //i can optimalize it by adding this depedencies in fetch
-    someStore.todayDataCurrencies(someStore.data.data);
-    someStore.twoDayDataCurrencies(someStore.historyData);
-    someStore.yesterdayDataCurrencies(someStore.twoDayCurrencies[0][1])
-    someStore.dataToDisplayFunction();
-  }
-
-  
 
   const sortByPrice = () => {
     if (sortPrice) {
@@ -120,7 +92,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
               <CurrencyItemOnMain
                 navigation={props.navigation}
                 id={item.id}
-                baseCurrency={someStore.data.baseCurrency}
+                baseCurrency={someStore.allInfoData.baseCurrency}
                 value={item.value}
                 change={item.change}
                 positive={item.change > 0 ? true : false}

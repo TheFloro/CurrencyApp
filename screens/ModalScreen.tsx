@@ -15,7 +15,7 @@ const ModalScreen = (props: any) => {
       screen: 'ParticularCurrency',
       params: {
         currencyId: selectedValue,
-        baseCurrency: someStore.data.baseCurrency,
+        baseCurrency: someStore.allInfoData.baseCurrency,
         currentValue: arrr.value
       }
     })
