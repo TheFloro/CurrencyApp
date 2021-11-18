@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Modal, Pressable, Alert, FlatList, TextInput } from 'react-native';
+import { mainColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
 const ModalScreen = (props: any) => {
@@ -22,15 +23,6 @@ const ModalScreen = (props: any) => {
   }
 
   return (
-    // <Modal
-    //   animationType="slide"
-    //   transparent={true}
-    //   visible={someStore.toggleModal} //someStore.toggleModal
-    //   onRequestClose={() => {
-    //     //Alert.alert("Modal has been closed.");
-    //     //props.setModalVisibleNegative
-    //   }}
-    // >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Are you looking for a certain currency?</Text>
@@ -63,7 +55,6 @@ const ModalScreen = (props: any) => {
           </View>
         </View>
       </View>
-    // </Modal>
   );
 }
 
@@ -72,11 +63,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    backgroundColor: 'rgba(255,255,255,0.5)'
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#2b4162", //313d5a //344966
+    backgroundColor: "lightgreen", //313d5a //344966 //supiicolor #2b4162
     borderRadius: 20,
     padding: 25,
     alignItems: "center",
@@ -87,7 +78,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 100,
+    borderWidth: 1.5,
+    borderColor: mainColor
   },
   button: {
     borderRadius: 20,
@@ -111,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 10,
     textAlign: "center",
-    color: 'white'
+    color: mainColor
   },
   input: {
     width: 150,

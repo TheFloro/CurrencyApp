@@ -4,7 +4,7 @@ import { FlatList, StyleSheet } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
 import { Text, View } from '../components/Themed';
-import TitleToSortBy from '../components/TitleToSortBy';
+import { secondScreenColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
 const TabTwoScreen = (props: any) => {
@@ -16,7 +16,7 @@ const TabTwoScreen = (props: any) => {
     <View style={styles.container}>
       {!isNotEmpty ?
         <View style={styles.ifEmptyContainer}>
-          <Text style={styles.textIfEmpty}>You haven't added anything to your Observable yet</Text>
+          <Text style={styles.textIfEmpty}>You haven't added anything to your "Keep Track" list yet</Text>
         </View>
         :
         <>
@@ -37,10 +37,10 @@ const TabTwoScreen = (props: any) => {
           icon='sort'
         /> */}
           </View>
-          <View style={{ backgroundColor: 'lightblue' }}>
+          <View style={{ backgroundColor: secondScreenColor }}>
             <View style={{ marginBottom: 30 }}>
               <FlatList
-                style={{ backgroundColor: 'lightblue' }}
+                style={{ backgroundColor: secondScreenColor }}
                 data={someStore.observatedCurrency}
                 keyExtractor={({ id }) => id}
                 renderItem={({ item }) => (
@@ -68,22 +68,23 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 5,
-    backgroundColor: 'lightblue'
+    backgroundColor: secondScreenColor
   },
   titlesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 5,
-    backgroundColor: 'lightblue'
+    backgroundColor: secondScreenColor
   },
   ifEmptyContainer:{
     alignItems: 'center', 
     justifyContent:'center', 
     flex:1, 
-    backgroundColor: 'lightblue'},
+    backgroundColor: secondScreenColor},
   textIfEmpty: {
     textAlign: 'center',
-    fontSize: 30
+    fontSize: 25,
+    fontFamily: 'sans-serif-light'
   }
 });
 

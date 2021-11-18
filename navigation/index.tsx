@@ -10,8 +10,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { ColorSchemeName, Pressable, View } from 'react-native';
 
-import Colors from '../constants/Colors';
+import Colors, { mainColor } from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
+import ChangeBaseCurrencyScreen from '../screens/ChangeBaseCurrencyScreen';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ParticularCurrency from '../screens/ParticularCurrency';
@@ -53,23 +54,9 @@ function RootNavigator() {
         headerTitleAlign: 'center',
         headerTitleStyle: { fontSize: 25 },
         headerStyle: {
-          backgroundColor: 'green'
+          backgroundColor: mainColor
         },
         title: 'More Info',
-        // headerRight: () => (
-        //   <Pressable
-        //     onPress={() => { console.log(navigation, route) }}
-        //     style={({ pressed }) => ({
-        //       opacity: pressed ? 0.5 : 1,
-        //     })}>
-        //       <FontAwesome
-        //         name={color ? "eye" : "eye-slash"}
-        //         size={25}
-        //         color={color ? 'blue' : 'lightgrey'}
-        //         style={{ marginRight: 15 }}
-        //       />
-        //   </Pressable>
-        // ),
         headerLeft: () => (
           <Pressable
             onPress={() => { navigation.navigate('TabOne')}}
@@ -90,6 +77,7 @@ function RootNavigator() {
       />
       <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ChangeCurrency" component={ChangeBaseCurrencyScreen} options={{ headerShown: false }} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -110,13 +98,13 @@ function BottomTabNavigator() {
       initialRouteName="TabOne"
       screenOptions={{
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'black',
-        tabBarActiveBackgroundColor: 'lightgreen',
-        tabBarInactiveBackgroundColor: 'lightgrey',
+        tabBarInactiveTintColor: '#bbab8b',
+        tabBarActiveBackgroundColor: '#96e072',
+        tabBarInactiveBackgroundColor: mainColor,
         headerTintColor: 'white',
         headerTitleAlign: 'center',
         headerTitleStyle: { fontSize: 25 },
-        headerStyle: { backgroundColor: 'green' }
+        headerStyle: { backgroundColor: mainColor}
       }}>
       <BottomTab.Screen
         name="TabOne"
@@ -126,8 +114,8 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="meetup" color={'green'} />,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                onPress={() => { }}
+              {/* <Pressable
+                onPress={() => { navigation.navigate('ChangeCurrency')}}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
                 })}>
@@ -137,7 +125,7 @@ function BottomTabNavigator() {
                   color='white'
                   style={{ marginRight: 25 }}
                 />
-              </Pressable>
+              </Pressable> */}
               <Pressable
                 onPress={() => { navigation.navigate('Modal') }}
                 style={({ pressed }) => ({
@@ -158,8 +146,8 @@ function BottomTabNavigator() {
         name="TabTwo"
         component={TabTwoScreen}
         options={{
-          title: 'Observable',
-          tabBarIcon: ({ color }) => <TabBarIcon name="eye" color={'blue'} />,
+          title: 'Keep Track',
+          tabBarIcon: ({ focused, color }) => <TabBarIcon name="eye" color={focused? '#ffed66' : 'lightgrey'}/>  //if it will be active make it green
         }}
       />
     </BottomTab.Navigator>

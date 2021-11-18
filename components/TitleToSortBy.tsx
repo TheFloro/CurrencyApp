@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { mainColor, mainScreenColor } from '../constants/Colors';
 
 const TitleToSortBy = (props: any) => {
     return (
@@ -27,8 +28,8 @@ const TitleToSortBy = (props: any) => {
 const styles = StyleSheet.create({
     title: {
         fontSize: 20,
-        backgroundColor: 'lightgreen',
-        marginHorizontal: 5
+        marginHorizontal: 5,
+        color: 'white'
     }
 });
 

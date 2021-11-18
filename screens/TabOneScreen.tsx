@@ -8,6 +8,8 @@ import { useStore } from '../store/store';
 import TitleToSortBy from '../components/TitleToSortBy';
 import { observer } from 'mobx-react-lite';
 import { getDate } from '../components/getDate';
+import TitleContainer from '../components/titleContainer';
+import { mainScreenColor } from '../constants/Colors';
 
 const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
 
@@ -18,13 +20,13 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
   const [sortChange, setSortChange] = useState(true);
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [testFetching, setTestFetching] = useState([]);
 
   useEffect(() => {
     if (!isDataLoaded) {
       someStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
       setIsDataLoaded(true);
     }
+    //someStore.fetchInBackground();
   }, [])
 
   const sortByPrice = () => {
@@ -63,61 +65,45 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
   }
 
   return (
-    <View style={styles.container}>
-      {/* {isLoading ? <Text>Loading...</Text> :  */}
+    <>
       <View style={styles.titlesContainer}>
-        <TitleToSortBy
-          sortBy={sortByCurrency}
-          title='Currency'
-          icon='sort'
-        />
-        <TitleToSortBy
-          sortBy={sortByPrice}
-          title='Price'
-          icon='sort'
-        />
-        <TitleToSortBy
-          sortBy={sortByChange}
-          title='24H Change'
-          icon='sort'
-        />
+        <TitleContainer />
       </View>
-      <View style={{backgroundColor: 'lightblue'}}>
-        <View style={{ marginBottom: 30 }}>
-          <FlatList
-            style={{ backgroundColor: 'lightblue' }}
-            data={someStore.dataToDisplay}
-            keyExtractor={({ id }) => id}
-            renderItem={({ item }) => (
-              <CurrencyItemOnMain
-                navigation={props.navigation}
-                id={item.id}
-                baseCurrency={someStore.allInfoData.baseCurrency}
-                value={item.value}
-                change={item.change}
-                positive={item.change > 0 ? true : false}
-              >
-              </CurrencyItemOnMain>
-            )}
-          />
-        </View>
+      <View style={styles.container}>
+        {/* {isLoading ? <Text>Loading...</Text> :  */}
+          <View style={{ marginBottom: 30, backgroundColor: mainScreenColor }}>
+            <FlatList
+              extraData={someStore.flatListReload}
+              style={{ backgroundColor: mainScreenColor }}
+              data={someStore.dataToDisplay}
+              keyExtractor={({ id }) => id}
+              renderItem={({ item }) => (
+                <CurrencyItemOnMain
+                  navigation={props.navigation}
+                  id={item.id}
+                  baseCurrency={someStore.allInfoData.baseCurrency}
+                  value={item.value}
+                  change={item.change}
+                  positive={item.change > 0 ? true : false}
+                >
+                </CurrencyItemOnMain>
+              )}
+            />
+          </View>
       </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 5,
-    backgroundColor: 'lightblue'
+    backgroundColor: mainScreenColor,
   },
   titlesContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-    backgroundColor: 'lightblue'
+    backgroundColor: mainScreenColor, //#ffa62b
+    width: '100%'
   },
 });
 

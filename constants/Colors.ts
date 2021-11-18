@@ -17,3 +17,7 @@ export default {
     tabIconSelected: tintColorDark,
   },
 };
+
+export const mainColor='#134611';
+export const mainScreenColor='#4c2b36'
+export const secondScreenColor='#795c5f'

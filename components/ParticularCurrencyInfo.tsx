@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+import { mainColor } from '../constants/Colors';
 
 const ParticularCurrencyInfo = (props: any) => {
     return (
@@ -14,10 +15,11 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: '50%',
-        height: '100%',
+        width: '49.5%',
+        height: '96%',
         borderWidth: 1,
-        borderColor: 'darkgreen'
+        borderColor: mainColor,
+        borderRadius: 20
     },
     moreInfoTitles: {
         fontFamily: 'sans-serif-thin',

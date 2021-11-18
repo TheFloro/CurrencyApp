@@ -6,6 +6,7 @@ import { useStore } from '../store/store';
 import { LineChart } from 'react-native-chart-kit';
 import { FontAwesome } from '@expo/vector-icons';
 import { observer } from 'mobx-react-lite';
+import { mainColor, mainScreenColor } from '../constants/Colors';
 
 const ParticularCurrency = (props: any) => {
     const { currencyId, baseCurrency, currentValue } = props.route.params.params;
@@ -15,29 +16,27 @@ const ParticularCurrency = (props: any) => {
     const lowestDropPrice = Math.min(...lastDaysPrices);
     const highestPicPrice = Math.max(...lastDaysPrices);
     //[0] is Xdays ago, [length-1] is current
-    const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[0]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[0])).toFixed(8)
+    const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[lastDaysPrices.length - 2]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[lastDaysPrices.length - 2])).toFixed(8)
     const dates = someStore.allInfoData.data.map((item: any) => item.date)
 
     const currentCurrencyIsObservated = someStore.observatedCurrency.some((currency: any) => currency.id === currencyId)
-
-    
 
     useEffect(() => {
         props.navigation.setOptions({
             headerRight: () => (
                 <Pressable
-                  onPress={() => {someStore.toggleObservatedCurrency(currencyId)}}
-                  style={({ pressed }) => ({
-                    opacity: pressed ? 0.5 : 1,
-                  })}>
+                    onPress={() => { someStore.toggleObservatedCurrency(currencyId) }}
+                    style={({ pressed }) => ({
+                        opacity: pressed ? 0.5 : 1,
+                    })}>
                     <FontAwesome
-                      name={currentCurrencyIsObservated ? "eye" : "eye-slash"}
-                      size={25}
-                      color={currentCurrencyIsObservated ? 'blue' : 'lightgrey'}
-                      style={{ marginRight: 15 }}
+                        name={currentCurrencyIsObservated ? "eye" : "eye-slash"}
+                        size={25}
+                        color={currentCurrencyIsObservated ? '#ffed66' : 'lightgrey'}
+                        style={{ marginRight: 15 }}
                     />
                 </Pressable>
-              )
+            )
         })
     }, [currentCurrencyIsObservated])
 
@@ -55,12 +54,12 @@ const ParticularCurrency = (props: any) => {
                             ]
                         }}
                         width={Dimensions.get("window").width}
-                        height={Dimensions.get("window").height/3}
+                        height={Dimensions.get("window").height / 3}
                         yAxisLabel=""
                         yAxisSuffix=""
                         yAxisInterval={1}
                         verticalLabelRotation={-55}
-                        chartConfig={{ 
+                        chartConfig={{
                             backgroundColor: "green",
                             backgroundGradientFrom: "grey",
                             backgroundGradientTo: "#A2D3C2",
@@ -117,9 +116,20 @@ const ParticularCurrency = (props: any) => {
                         />
                     </View>
                 </View>
-                <View style={styles.notificationContainer}>
+                {/* <View style={styles.notificationContainer}>
                     <NotificationButton text='Get Notification when currency picks' />
                     <NotificationButton text='Get Notification when currency drops' />
+                </View> */}
+                <View style={styles.notificationContainer}>
+                    <View style={{ flex: 1 }}>
+                        <View style={styles.getNotification}>
+                            <Text style={styles.getNotificationText}>Get Notifications when:</Text>
+                        </View>
+                    </View>
+                    <View style={{ flex: 2 }}>
+                        <NotificationButton icon='long-arrow-up' text='Currency picks' styles={{ borderColor: 'green' }} iconStyles={{color: 'green'}} />
+                        <NotificationButton icon='long-arrow-down' text='Currency drops' styles={{ borderColor: 'red' }} iconStyles={{color: 'red'}} />
+                    </View>
                 </View>
             </View>
         </View>
@@ -139,16 +149,15 @@ const styles = StyleSheet.create({
     },
     moreInfoContainer: {
         flex: 2,
-        backgroundColor: 'darkgreen'
+        backgroundColor: mainScreenColor
     },
     titleContainer: {
-        borderTopWidth: 3,
-        borderBottomWidth: 3,
-        borderColor: 'black',
+        borderWidth: 2,
+        borderColor: mainColor,
         height: 50,
         justifyContent: 'center',
         marginTop: -3,
-        backgroundColor: 'green'
+        backgroundColor: 'black'
     },
     title: {
         textAlign: 'center',
@@ -156,9 +165,6 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     moreInfo: {
-        marginTop: -3,
-        borderColor: 'black',
-        borderWidth: 3
     },
     pickDropContainer: {
         flexDirection: 'row',
@@ -172,13 +178,33 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 100,
     },
+    // notificationContainer: {
+    //     flex: 1,
+    //     justifyContent: 'space-evenly',
+    //     alignItems: 'stretch',
+    //     backgroundColor: mainScreenColor,
+    //     //'#488B49'
+    // },
     notificationContainer: {
         flex: 1,
-        justifyContent: 'space-evenly',
-        alignItems: 'stretch',
-        backgroundColor: 'white',
-        //'#488B49'
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
+    getNotification: {
+        borderColor: 'grey',
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        padding: 10,
+        borderWidth: 1
+    },
+    getNotificationText: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: 'gold'
+    },
+
 });
 
 export default observer(ParticularCurrency);

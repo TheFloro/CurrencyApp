@@ -40,12 +40,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#F4F9E9'
-    },
-    itemOnMainContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+        backgroundColor: '#F4F9E9',
+        borderRadius: 20
     },
     currency: {
         width: '30%',
