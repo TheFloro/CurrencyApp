@@ -21,26 +21,52 @@ export default class SomeStore {
     }
 
     async toggleObservatedCurrency(currentId: string) {
-        let keys = [];
-        keys = await AsyncStorage.getAllKeys();
+        // let keys = [];
+        // keys = await AsyncStorage.getAllKeys();
+        // try {
+        //     if (currentId === this.observatedKeys.find((item: any) => item === currentId)) {
+        //         await AsyncStorage.removeItem(currentId);
+        //     } else {
+        //         await AsyncStorage.setItem(currentId, 'id')
+        //     }
+        // } catch (e) {
+        //     console.log('error', e)
+        // }
+        // keys = await AsyncStorage.getAllKeys();
+        // this.changeKeys(keys);
+        this.refreshingData();
+
+        const jsonValue = await AsyncStorage.getItem('@tracked');
+        const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
+        //a will have to be from mobx - to let know useEffect in depedency that it has to make an action
         try {
-            if (currentId === this.observatedKeys.find((item: any) => item === currentId)) {
-                await AsyncStorage.removeItem(currentId);
+            if (a !== null) {
+                const existingIndex = a.findIndex((item: any) => item === currentId);
+                //console.log(existingIndex, 'existingIndex', a, 'a')
+
+                if (existingIndex >= 0) {
+                    a.splice(existingIndex, 1);
+                    const c = JSON.stringify(a);
+                    await AsyncStorage.setItem('@tracked', c);
+                    //  console.log(a, 'b - existing')
+                } else {
+                    const b = [...a];
+                    b.push(currentId);
+                    const c = JSON.stringify(b);
+                    await AsyncStorage.setItem('@tracked', c);
+                    //  console.log(b, 'b - tableNOTnull')
+                }
             } else {
-                await AsyncStorage.setItem(currentId, 'id')
+                const b = [];
+                b.push(currentId);
+                const c = JSON.stringify(b);
+                await AsyncStorage.setItem('@tracked', c);
+                //  console.log(b, 'b - tableIsNull')
             }
         } catch (e) {
-            console.log('error', e)
+            console.log('error', e);
         }
-        keys = await AsyncStorage.getAllKeys();
-        this.changeKeys(keys);
-
-
-        // const jsonValue = await AsyncStorage.getItem('@tracked');
-        // const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-        // try {
-        //     if (currentId === a.find)
-        // }
+        this.refreshingData();
     }
 
     changeKeys(newValue: any) {
@@ -49,10 +75,20 @@ export default class SomeStore {
 
     async updateObservatedCurrency() {
         try {
-            this.observatedCurrency = this.observatedKeys.map((currencyId: any) => this.dataToDisplay.find((item: any) => item.id === currencyId));
+            const jsonValue = await AsyncStorage.getItem('@tracked');
+            const keys = (jsonValue != null ? JSON.parse(jsonValue) : null);
+            if (keys !== null) {
+                // this.observatedCurrency = this.observatedKeys.map((currencyId: any) => this.dataToDisplay.find((item: any) => item.id === currencyId));
+                const updatedValue = await keys.map((item: any) => this.dataToDisplay.find((otherItem: any) => otherItem.id === item));
+                this.updateObservatedCurrencyArray(updatedValue);
+            }
         } catch (e) {
             Alert.alert("I am so sorry, there was a problem with updating your Tracked Currencies")
         }
+    }
+
+    updateObservatedCurrencyArray(newValue: any) {
+        this.observatedCurrency = newValue;
     }
 
     reloadFlatList() {
@@ -71,7 +107,8 @@ export default class SomeStore {
     }
 
     async fetchingDataOfTenLastDays(currency: string, dateFrom: string, dateTo: string) {
-        this.refreshingData();
+        //await AsyncStorage.clear() //for now
+
         const axios = require('axios').default;
         let keys = [];
         keys = await AsyncStorage.getAllKeys();
@@ -110,8 +147,9 @@ export default class SomeStore {
         } catch (e) {
             Alert.alert("I am so sorry, data of last days couldn't be fetched");
         }
-        this.reloadFlatList()
-        this.refreshingData();
+        this.reloadFlatList();
+        this.updateObservatedCurrency();
+
     }
 
     refreshingData() {
@@ -123,5 +161,5 @@ export default class SomeStore {
 
         this.allInfoData.data.every((item: any) => historicalDataTotal.push(item.value[currencyId]));
         return historicalDataTotal;
-    } 
+    }
 }

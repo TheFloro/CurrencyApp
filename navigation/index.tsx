@@ -134,12 +134,16 @@ function BottomTabNavigator() {
                 onPress={() => { navigation.navigate('Modal') }}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
+                  marginRight: 15,
+                  width: 60,
+                  height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 })}>
                 <FontAwesome
                   name="search"
                   size={25}
                   color='white'
-                  style={{ marginRight: 15 }}
                 />
               </Pressable>
             </View>

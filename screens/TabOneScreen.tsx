@@ -32,7 +32,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
    if (!someStore.isEverythingFetching){
      someStore.updateObservatedCurrency();
    }   
- }, [someStore.observatedKeys, someStore.isEverythingFetching])
+ }, [someStore.isEverythingFetching])
   
 const dataLoader = async () =>{
   try {

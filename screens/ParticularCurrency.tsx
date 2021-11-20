@@ -17,9 +17,12 @@ const ParticularCurrency = (props: any) => {
     const highestPicPrice = Math.max(...lastDaysPrices);
     //[0] is Xdays ago, [length-1] is current
     const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[lastDaysPrices.length - 2]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[lastDaysPrices.length - 2])).toFixed(8)
-    const dates = someStore.allInfoData.data.map((item: any) => item.date)
+    const dates = someStore.allInfoData.data.map((item: any) => item.date);
+    let currentCurrencyIsObservated: any = [];
+    useEffect(() => {
+        currentCurrencyIsObservated = someStore.observatedCurrency.some((item: any) => item.id === currencyId);
+    }, [someStore.observatedCurrency])
 
-    const currentCurrencyIsObservated = someStore.observatedCurrency.some((currency: any) => currency.id === currencyId)
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -28,12 +31,16 @@ const ParticularCurrency = (props: any) => {
                     onPress={() => { someStore.toggleObservatedCurrency(currencyId) }}
                     style={({ pressed }) => ({
                         opacity: pressed ? 0.5 : 1,
+                        marginRight: 15,
+                        width: 60,
+                        height: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center'
                     })}>
                     <FontAwesome
                         name={currentCurrencyIsObservated ? "eye" : "eye-slash"}
                         size={25}
                         color={currentCurrencyIsObservated ? '#ffed66' : 'lightgrey'}
-                        style={{ marginRight: 15 }}
                     />
                 </Pressable>
             )
@@ -147,7 +154,7 @@ const ParticularCurrency = (props: any) => {
                             text='Currency drops'
                             styles={{ borderColor: 'red' }}
                             iconStyles={{ color: 'red' }}
-                            onClick={() => { 
+                            onClick={() => {
                                 props.navigation.navigate('CurrencyDropsModal', {
                                     screen: 'CurrencyDropsModal',
                                     params: {
