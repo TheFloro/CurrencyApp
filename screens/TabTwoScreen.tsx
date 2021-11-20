@@ -5,6 +5,7 @@ import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
 import { Text, View } from '../components/Themed';
 import TitleContainer from '../components/titleContainer';
+import YourNotifications from '../components/YourNotifications';
 import { secondScreenColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
@@ -15,6 +16,7 @@ const TabTwoScreen = (props: any) => {
 
   return (
     <View style={styles.container}>
+      <YourNotifications />
       {!isNotEmpty ?
         <View style={styles.ifEmptyContainer}>
           <Text style={styles.textIfEmpty}>You haven't added anything to your "Keep Track" list yet</Text>

@@ -30,6 +30,8 @@ const linking: LinkingOptions<RootStackParamList> = {
       ParticularCurrency: 'particularCurrency',
       Modal: 'modal',
       ChangeCurrency: 'changeCurrency',
+      CurrencyPicksModal: 'currencyPicksModal',
+      CurrencyDropsModal: 'currencyDropsModal',
       NotFound: '*',
     },
   },

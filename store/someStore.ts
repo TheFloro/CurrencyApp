@@ -34,6 +34,13 @@ export default class SomeStore {
         }
         keys = await AsyncStorage.getAllKeys();
         this.changeKeys(keys);
+
+
+        // const jsonValue = await AsyncStorage.getItem('@tracked');
+        // const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
+        // try {
+        //     if (currentId === a.find)
+        // }
     }
 
     changeKeys(newValue: any) {
@@ -107,7 +114,7 @@ export default class SomeStore {
         this.refreshingData();
     }
 
-    refreshingData(){
+    refreshingData() {
         this.isEverythingFetching = !this.isEverythingFetching;
     }
 
@@ -116,5 +123,5 @@ export default class SomeStore {
 
         this.allInfoData.data.every((item: any) => historicalDataTotal.push(item.value[currencyId]));
         return historicalDataTotal;
-    }
+    } 
 }

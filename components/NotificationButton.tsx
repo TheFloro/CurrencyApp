@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 
 const NotificationButton = (props: any) => {
     return (
-        <TouchableOpacity style={{...styles.notficationButton, ...props.styles}}>
+        <TouchableOpacity style={{...styles.notficationButton, ...props.styles}} onPress={props.onClick}>
              <Text style={styles.notificationText}>{props.text}</Text>
             <FontAwesome
               name={props.icon}

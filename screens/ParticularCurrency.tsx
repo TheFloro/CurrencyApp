@@ -127,8 +127,36 @@ const ParticularCurrency = (props: any) => {
                         </View>
                     </View>
                     <View style={{ flex: 2 }}>
-                        <NotificationButton icon='long-arrow-up' text='Currency picks' styles={{ borderColor: 'green' }} iconStyles={{color: 'green'}} />
-                        <NotificationButton icon='long-arrow-down' text='Currency drops' styles={{ borderColor: 'red' }} iconStyles={{color: 'red'}} />
+                        <NotificationButton
+                            icon='long-arrow-up'
+                            text='Currency picks'
+                            styles={{ borderColor: 'green' }}
+                            iconStyles={{ color: 'green' }}
+                            onClick={() => {
+                                props.navigation.navigate('CurrencyPicksModal', {
+                                    screen: 'CurrencyPicksModal',
+                                    params: {
+                                        currencyId: props.route.params.params.currencyId,
+                                        currentValue: props.route.params.params.currentValue
+                                    }
+                                })
+                            }}
+                        />
+                        <NotificationButton
+                            icon='long-arrow-down'
+                            text='Currency drops'
+                            styles={{ borderColor: 'red' }}
+                            iconStyles={{ color: 'red' }}
+                            onClick={() => { 
+                                props.navigation.navigate('CurrencyDropsModal', {
+                                    screen: 'CurrencyDropsModal',
+                                    params: {
+                                        currencyId: props.route.params.params.currencyId,
+                                        currentValue: props.route.params.params.currentValue
+                                    }
+                                })
+                            }}
+                        />
                     </View>
                 </View>
             </View>
@@ -194,7 +222,7 @@ const styles = StyleSheet.create({
     getNotification: {
         borderColor: 'grey',
         borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: 'rgba(1,1,1,0.1)',
         justifyContent: 'center',
         padding: 10,
         borderWidth: 1

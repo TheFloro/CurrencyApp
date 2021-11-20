@@ -13,6 +13,8 @@ import { ColorSchemeName, Pressable, View } from 'react-native';
 import Colors, { mainColor } from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ChangeBaseCurrencyScreen from '../screens/ChangeBaseCurrencyScreen';
+import CurrencyDropsModal from '../screens/CurrencyDropsModal';
+import CurrencyPicksModal from '../screens/CurrencyPicksModal';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ParticularCurrency from '../screens/ParticularCurrency';
@@ -78,6 +80,8 @@ function RootNavigator() {
       <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ChangeCurrency" component={ChangeBaseCurrencyScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="CurrencyPicksModal" component={CurrencyPicksModal} options={{ headerShown: false }} />
+        <Stack.Screen name="CurrencyDropsModal" component={CurrencyDropsModal} options={{ headerShown: false }} />
       </Stack.Group>
     </Stack.Navigator>
   );

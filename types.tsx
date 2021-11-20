@@ -18,6 +18,8 @@ export type RootStackParamList = {
   ParticularCurrency: undefined;
   Modal: undefined;
   ChangeCurrency: undefined;
+  CurrencyPicksModal: undefined;
+  CurrencyDropsModal: undefined;
   NotFound: undefined;
 };
 
