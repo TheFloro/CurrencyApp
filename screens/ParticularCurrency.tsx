@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     getNotification: {
         borderColor: 'grey',
         borderRadius: 20,
-        backgroundColor: 'rgba(1,1,1,0.1)',
+        backgroundColor: 'rgba(1,1,1,0.5)',
         justifyContent: 'center',
         padding: 10,
         borderWidth: 1

@@ -16,6 +16,7 @@ const TabTwoScreen = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView style={{flex:1}} contentContainerStyle={{flexGrow: 1}}>
       <YourNotifications />
       {!isNotEmpty ?
         <View style={styles.ifEmptyContainer}>
@@ -71,6 +72,7 @@ const TabTwoScreen = (props: any) => {
           </View>
         </>
       }
+      </ScrollView>
     </SafeAreaView>
   );
 }
