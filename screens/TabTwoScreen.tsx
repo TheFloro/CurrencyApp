@@ -4,6 +4,7 @@ import { FlatList, StyleSheet } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
 import { Text, View } from '../components/Themed';
+import TitleContainer from '../components/titleContainer';
 import { secondScreenColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
@@ -20,6 +21,9 @@ const TabTwoScreen = (props: any) => {
         </View>
         :
         <>
+          <View style={{height: 61, width: '100%'}}>
+            <TitleContainer />
+          </View>
           <View style={styles.titlesContainer}>
             {/* <TitleToSortBy
           sortBy={sortByCurrency}
@@ -41,6 +45,7 @@ const TabTwoScreen = (props: any) => {
             <View style={{ marginBottom: 30 }}>
               <FlatList
                 style={{ backgroundColor: secondScreenColor }}
+                contentContainerStyle={{ alignItems: 'center' }}
                 data={someStore.observatedCurrency}
                 keyExtractor={({ id }) => id}
                 renderItem={({ item }) => (
@@ -66,8 +71,6 @@ const TabTwoScreen = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 5,
     backgroundColor: secondScreenColor
   },
   titlesContainer: {
@@ -76,11 +79,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     backgroundColor: secondScreenColor
   },
-  ifEmptyContainer:{
-    alignItems: 'center', 
-    justifyContent:'center', 
-    flex:1, 
-    backgroundColor: secondScreenColor},
+  ifEmptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    backgroundColor: secondScreenColor
+  },
   textIfEmpty: {
     textAlign: 'center',
     fontSize: 25,

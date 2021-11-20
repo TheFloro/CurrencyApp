@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 
 const CurrencyItemOnMain = (props: any) => {
     const [positive, setPositive] = useState(props.positive);
     //setPositive(props.positive)
     return (
-        <TouchableOpacity onPress={() => {
+        <View style={styles.container}>
+        <Pressable 
+        onPress={() => {
             props.navigation.navigate('ParticularCurrency', {
                 screen: 'ParticularCurrency',
                 params: {
@@ -14,7 +16,15 @@ const CurrencyItemOnMain = (props: any) => {
                     currentValue: props.value
                 }
             })
-        }}>
+        }}
+        style={({ pressed }) => ({
+            alignItems: 'center',
+            opacity: pressed ? 0.2 : 1,
+            padding: 10,
+            backgroundColor: pressed ? 'lightgreen' : 'white',
+            borderRadius: 25,
+          })}
+        >
             <View style={{ ...styles.item, ...props.style }}>
                 <View style={styles.currency}>
                     <Text style={styles.itemText}>{props.id}/</Text>
@@ -27,21 +37,32 @@ const CurrencyItemOnMain = (props: any) => {
                     <Text style={styles.changeText}>{props.change}%</Text>
                 </View>
             </View>
-        </TouchableOpacity>
+            
+        </Pressable>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    item: {
-        padding: 10,
+    container:{
         marginVertical: 5,
-        borderWidth: 3,
-        borderColor: 'black',
+        borderWidth: 2,
+        borderColor: 'rgba(155,155,155,0.1)',
+        backgroundColor: 'white',
+        borderRadius: 25,
+        shadowColor: "#134611",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.29,
+        shadowRadius: 4.65,
+        elevation: 4,
+        width: '95%',
+    },
+    item: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#F4F9E9',
-        borderRadius: 20
+        alignItems: 'center'
     },
     currency: {
         width: '30%',
@@ -52,15 +73,13 @@ const styles = StyleSheet.create({
     },
     change: {
         width: '20%',
-        borderColor: 'green',
-        borderWidth: 5,
+        padding: 5,
         alignItems: 'center',
         backgroundColor: 'green'
     },
     changeNegative: {
         width: '20%',
-        borderColor: 'red',
-        borderWidth: 5,
+        padding: 5,
         alignItems: 'center',
         backgroundColor: 'red'
     },

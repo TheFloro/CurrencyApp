@@ -23,11 +23,25 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
 
   useEffect(() => {
     if (!isDataLoaded) {
-      someStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
-      setIsDataLoaded(true);
+      dataLoader();
     }
     //someStore.fetchInBackground();
   }, [])
+
+ useEffect(() => {
+   if (!someStore.isEverythingFetching){
+     someStore.updateObservatedCurrency();
+   }   
+ }, [someStore.observatedKeys, someStore.isEverythingFetching])
+  
+const dataLoader = async () =>{
+  try {
+    await someStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
+    setIsDataLoaded(true);
+  } catch (e) {
+    console.log(e, 'error in dataLoader');
+  }
+}
 
   const sortByPrice = () => {
     if (sortPrice) {
@@ -74,7 +88,8 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
           <View style={{ marginBottom: 30, backgroundColor: mainScreenColor }}>
             <FlatList
               extraData={someStore.flatListReload}
-              style={{ backgroundColor: mainScreenColor }}
+              style={{ backgroundColor: mainScreenColor, marginBottom: 30 }}
+              contentContainerStyle={{alignItems: 'center'}}
               data={someStore.dataToDisplay}
               keyExtractor={({ id }) => id}
               renderItem={({ item }) => (
@@ -85,8 +100,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
                   value={item.value}
                   change={item.change}
                   positive={item.change > 0 ? true : false}
-                >
-                </CurrencyItemOnMain>
+                />
               )}
             />
           </View>
@@ -97,7 +111,6 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
     backgroundColor: mainScreenColor,
   },
   titlesContainer: {

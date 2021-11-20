@@ -19,5 +19,5 @@ export default {
 };
 
 export const mainColor='#134611';
-export const mainScreenColor='#4c2b36'
-export const secondScreenColor='#795c5f'
+export const mainScreenColor='white' //#4c2b36
+export const secondScreenColor='white' //#795c5f
