@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import useCachedResources from './hooks/useCachedResources';
@@ -11,22 +11,37 @@ import * as Permissions from 'expo-permissions';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import { getDate } from './components/getDate';
-import { Button, Text } from 'react-native';
+import { Button, Text, View } from 'react-native';
 
-// const BACKGROUND_FETCH_TASK = 'background-fetch'
+const BACKGROUND_FETCH_TASK = 'background-fetch'
 
-// TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-//   const { someStore } = useStore();
-//   try {
-//     const receivedData = await fetch(`https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=${currency}&date_from=${dateFrom}&date_to=${dateTo}`)
-//     console.log("myTask() ", receivedData);
-//     return receivedData
-//       ? BackgroundFetch.BackgroundFetchResult.NewData
-//       : BackgroundFetch.BackgroundFetchResult.NoData
-//   } catch (err) {
-//     return BackgroundFetch.BackgroundFetchResult.Failed;
-//   }
-// });
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  const {someStore} = useStore();
+  try {
+    const receivedData = await someStore.fetchInBackground();
+    console.log("receivedData ", receivedData);
+    getLocalNotification();
+    return receivedData
+      ? BackgroundFetch.BackgroundFetchResult.NewData
+      : BackgroundFetch.BackgroundFetchResult.NoData
+  } catch (err) {
+    console.log(err)
+  }
+});
+
+const makeNotification = (title: string, body: string) => {
+  const content = { title: 'Your tracked currency reached certain value!', body: ''};
+
+  Notifications.scheduleNotificationAsync({ content, trigger: null });
+}
+
+async function registerBackgroundFetchAsync() {
+  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+    minimumInterval: 1, // 15 minutes 60*15
+    stopOnTerminate: false, // android only,
+    startOnBoot: true, // android only
+  });
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -56,22 +71,30 @@ const content = { title: 'Test Notification', body: 'hey, you!' };
 const getLocalNotification = async () => {
   //await getPermission();
   var now = new Date(Date.now() + (5 * 60 * 1000));
-  console.log('teraz', now, new Date())
+  console.log('5 minut w przody', now, new Date())
   Notifications.scheduleNotificationAsync({ content, trigger: null })
 }
 
 export default function App() {
+  const [isRegistered, setIsRegistered] = useState<boolean>(false);
+  const [status, setStatus] = useState<BackgroundFetch.BackgroundFetchStatus | null>(null);
 
-  // useEffect(() => {
+  useEffect(() => {
+    toggleFetchTask();
+    checkStatusAsync();
+  }, [])
 
-  //   setInterval( checkifAnyDepedencyIsReady, 5000);
-  // },[])
+  const toggleFetchTask = async () => {
+    await registerBackgroundFetchAsync();
+    checkStatusAsync();
+  };
 
-  // const checkifAnyDepedencyIsReady = () => {
-  //   if (1 > 1) {
-  //     getLocalNotification();
-  //   }
-  // }
+  const checkStatusAsync = async () => {
+    const status = await BackgroundFetch.getStatusAsync();
+    const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
+    setStatus(status);
+    setIsRegistered(isRegistered);
+  }
 
   // useEffect(() => {
   //   registerForPushNotification().then((token) => console.log(token)).catch((err) => console.log(err))

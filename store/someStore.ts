@@ -101,7 +101,8 @@ export default class SomeStore {
         try {
             const response = await axios.get(`https://freecurrencyapi.net/api/v2/latest?apikey=YOUR-APIKEY&base_currency=PLN`);
             console.log(response.data.data);
-            this.fetchingInBackgroundData = response.data.data;
+            // this.fetchingInBackgroundData = response.data.data;
+            return response.data.data;
         } catch (err) {
             console.log(err);
         }
@@ -180,19 +181,16 @@ export default class SomeStore {
                     a.push({ id: currentId, pick: value, drop: drop });
                     const c = JSON.stringify(a);
                     await AsyncStorage.setItem('@Notifications', c)
-                    console.log('Updated', c)
                 } else {
                     a.push({ id: currentId, pick: value, drop: null });
                     const c = JSON.stringify(a);
                     await AsyncStorage.setItem('@Notifications', c)
-                    console.log('New', c)
                 }
             } else {
                 let b = [];
                 b.push({ id: currentId, pick: value, drop: null })
                 const c = JSON.stringify(b);
                 await AsyncStorage.setItem('@Notifications', c)
-                console.log('First In Tabel', c)
             }
         } catch (e) {
             Alert.alert("I am sorry, occured a problem with setting notifications");
@@ -216,19 +214,16 @@ export default class SomeStore {
                     a.push({ id: currentId, pick: pick, drop: value });
                     const c = JSON.stringify(a);
                     await AsyncStorage.setItem('@Notifications', c)
-                    console.log('Updated', c)
                 } else {
                     a.push({ id: currentId, pick: null, drop: value });
                     const c = JSON.stringify(a);
                     await AsyncStorage.setItem('@Notifications', c)
-                    console.log('New', c)
                 }
             } else {
                 let b = [];
                 b.push({ id: currentId, pick: null, drop: value })
                 const c = JSON.stringify(b);
                 await AsyncStorage.setItem('@Notifications', c)
-                console.log('First In Tabel', c)
             }
         } catch (e) {
             Alert.alert("I am sorry, occured a problem with setting notifications");
@@ -249,4 +244,56 @@ export default class SomeStore {
         }
         this.reloadNotificationAction();
     }
+
+    sortPrice: boolean = false;
+    sortCurrency: boolean = true;
+    sortChange: boolean = false;
+
+    sortByPrice() {
+        this.reloadFlatList();
+        this.sortCurrency = false;
+        this.sortChange = false;
+        if (this.sortPrice) {
+            this.dataToDisplay.sort(function (a: any, b: any) { return b.value - a.value })
+            this.sortPrice = false;
+        } else {
+            this.dataToDisplay.sort(function (a: any, b: any) { return a.value - b.value })
+            this.sortPrice = true;
+        }
+        this.reloadFlatList();
+    }
+
+     sortByCurrency = () => {
+        this.reloadFlatList();
+        this.sortPrice = false;
+        this.sortChange = false;
+        if (this.sortCurrency) {
+          this.dataToDisplay.sort((a: any, b: any) => {
+            if (a.id < b.id) return -1;
+            return a.id > b.id ? 1 : 0;
+          });
+          this.sortCurrency = false;
+        } else {
+          this.dataToDisplay.sort((a: any, b: any) => {
+            if (a.id > b.id) return -1;
+            return a.id < b.id ? 1 : 0;
+          });
+          this.sortCurrency = true;
+        }
+        this.reloadFlatList();
+      }
+
+       sortByChange = () => {
+        this.reloadFlatList();
+        this.sortPrice = false;
+        this.sortCurrency = false;
+        if (this.sortChange) {
+          this.dataToDisplay.sort(function (a: any, b: any) { return b.change - a.change })
+         this.sortChange = false;
+        } else {
+          this.dataToDisplay.sort(function (a: any, b: any) { return a.change - b.change })
+          this.sortChange = true;
+        }
+        this.reloadFlatList();
+      }
 }

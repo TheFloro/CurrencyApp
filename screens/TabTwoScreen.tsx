@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
 import { Text, View } from '../components/Themed';
@@ -15,7 +15,7 @@ const TabTwoScreen = (props: any) => {
   const isNotEmpty: boolean = someStore.observatedCurrency.length > 0;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <YourNotifications />
       {!isNotEmpty ?
         <View style={styles.ifEmptyContainer}>
@@ -71,7 +71,7 @@ const TabTwoScreen = (props: any) => {
           </View>
         </>
       }
-    </View>
+    </SafeAreaView>
   );
 }
 

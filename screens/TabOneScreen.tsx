@@ -32,7 +32,7 @@ const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
    if (!someStore.isEverythingFetching){
      someStore.updateObservatedCurrency();
    }   
- }, [someStore.isEverythingFetching])
+ }, [someStore.isEverythingFetching, someStore.updateObservatedCurrencyArray])
   
 const dataLoader = async () =>{
   try {
@@ -43,40 +43,7 @@ const dataLoader = async () =>{
   }
 }
 
-  const sortByPrice = () => {
-    if (sortPrice) {
-      someStore.dataToDisplay.sort(function (a: any, b: any) { return b.value - a.value })
-      setSortPrice(false);
-    } else {
-      someStore.dataToDisplay.sort(function (a: any, b: any) { return a.value - b.value })
-      setSortPrice(true);
-    }
-  }
-
-  const sortByCurrency = () => {
-    if (sortCurrency) {
-      someStore.dataToDisplay.sort((a: any, b: any) => {
-        if (a.id < b.id) return -1;
-        return a.id > b.id ? 1 : 0;
-      });
-      setSortCurrency(false);
-    } else {
-      someStore.dataToDisplay.sort((a: any, b: any) => {
-        if (a.id > b.id) return -1;
-        return a.id < b.id ? 1 : 0;
-      });
-      setSortCurrency(true);
-    }
-  }
-  const sortByChange = () => {
-    if (sortChange) {
-      someStore.dataToDisplay.sort(function (a: any, b: any) { return b.change - a.change })
-      setSortChange(false);
-    } else {
-      someStore.dataToDisplay.sort(function (a: any, b: any) { return a.change - b.change })
-      setSortChange(true);
-    }
-  }
+ 
 
   return (
     <>
