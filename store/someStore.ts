@@ -13,6 +13,7 @@ export default class SomeStore {
     allInfoData: any = [];
 
     flatListReload: boolean = false;
+    notificationReload: boolean = false;
 
     fetchingInBackgroundData: any = [];
 
@@ -64,7 +65,7 @@ export default class SomeStore {
                 //  console.log(b, 'b - tableIsNull')
             }
         } catch (e) {
-            console.log('error', e);
+            Alert.alert("I am sorry, we cannot add this to your tracked list");
         }
         this.refreshingData();
     }
@@ -83,7 +84,7 @@ export default class SomeStore {
                 this.updateObservatedCurrencyArray(updatedValue);
             }
         } catch (e) {
-            Alert.alert("I am so sorry, there was a problem with updating your Tracked Currencies")
+            Alert.alert("I am so sorry, there was a problem with updating your Tracked Currencies");
         }
     }
 
@@ -161,5 +162,91 @@ export default class SomeStore {
 
         this.allInfoData.data.every((item: any) => historicalDataTotal.push(item.value[currencyId]));
         return historicalDataTotal;
+    }
+
+    async makingNewPickNotifications(currentId: string, value: number) {
+        this.reloadNotificationAction();
+        const jsonValue = await AsyncStorage.getItem('@Notifications');
+        const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
+        //a will have to be from mobx - to let know useEffect in depedency that it has to make an action
+        try {
+            if (a !== null) {
+                const existingIndex = a.findIndex((item: any) => item.id === currentId);
+
+                if (existingIndex >= 0) {
+                    const lowInstances = a.find((item: any) => item.id === currentId);
+                    const drop = lowInstances.drop;
+                    a.splice(existingIndex, 1);
+                    a.push({ id: currentId, pick: value, drop: drop });
+                    const c = JSON.stringify(a);
+                    await AsyncStorage.setItem('@Notifications', c)
+                    console.log('Updated', c)
+                } else {
+                    a.push({ id: currentId, pick: value, drop: null });
+                    const c = JSON.stringify(a);
+                    await AsyncStorage.setItem('@Notifications', c)
+                    console.log('New', c)
+                }
+            } else {
+                let b = [];
+                b.push({ id: currentId, pick: value, drop: null })
+                const c = JSON.stringify(b);
+                await AsyncStorage.setItem('@Notifications', c)
+                console.log('First In Tabel', c)
+            }
+        } catch (e) {
+            Alert.alert("I am sorry, occured a problem with setting notifications");
+        }
+        this.reloadNotificationAction();
+    }
+
+    async makingNewDropNotifications(currentId: string, value: number) {
+        this.reloadNotificationAction();
+        const jsonValue = await AsyncStorage.getItem('@Notifications');
+        const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
+        //a will have to be from mobx - to let know useEffect in depedency that it has to make an action
+        try {
+            if (a !== null) {
+                const existingIndex = a.findIndex((item: any) => item.id === currentId);
+
+                if (existingIndex >= 0) {
+                    const lowInstances = a.find((item: any) => item.id === currentId);
+                    const pick = lowInstances.pick;
+                    a.splice(existingIndex, 1);
+                    a.push({ id: currentId, pick: pick, drop: value });
+                    const c = JSON.stringify(a);
+                    await AsyncStorage.setItem('@Notifications', c)
+                    console.log('Updated', c)
+                } else {
+                    a.push({ id: currentId, pick: null, drop: value });
+                    const c = JSON.stringify(a);
+                    await AsyncStorage.setItem('@Notifications', c)
+                    console.log('New', c)
+                }
+            } else {
+                let b = [];
+                b.push({ id: currentId, pick: null, drop: value })
+                const c = JSON.stringify(b);
+                await AsyncStorage.setItem('@Notifications', c)
+                console.log('First In Tabel', c)
+            }
+        } catch (e) {
+            Alert.alert("I am sorry, occured a problem with setting notifications");
+        }
+        this.reloadNotificationAction();
+    }
+
+    reloadNotificationAction() {
+        this.notificationReload = !this.notificationReload;
+    }
+
+    async clearNotifications() {
+        this.reloadNotificationAction();
+        try {
+            await AsyncStorage.removeItem('@Notifications');
+        } catch (e) {
+            Alert.alert('Something went wrong while clearing Notifications')
+        }
+        this.reloadNotificationAction();
     }
 }

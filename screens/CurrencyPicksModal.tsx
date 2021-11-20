@@ -5,11 +5,14 @@ import { useStore } from '../store/store';
 
 const CurrencyPicksModal = (props: any) => {
   const { currencyId, currentValue } = props.route.params.params;
+  const {someStore} = useStore();
 
   const [selectedValue, setSelectedValue] = useState('');
   const isEverythingAlright: boolean = selectedValue > currentValue;
 
   const checkIfEverythingIsAlirght = () => {
+    someStore.makingNewPickNotifications(currencyId, Number(selectedValue));
+    props.navigation.goBack();
   }
 
   return (
@@ -36,9 +39,8 @@ const CurrencyPicksModal = (props: any) => {
           </Pressable>
           <Pressable
             style={isEverythingAlright ? [styles.button, styles.buttonEnabled] : [styles.button, styles.buttonDissabled]}
-            onPress={() => {
-              
-            }}>
+            onPress={checkIfEverythingIsAlirght}
+            >
             <Text style={styles.textStyle}>Search</Text>
           </Pressable>
         </View>
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: 'rgba(255,255,255,0.5)'
+    backgroundColor: 'rgba(255,255,255,0.5)',
   },
   modalView: {
     margin: 20,
@@ -69,7 +71,8 @@ const styles = StyleSheet.create({
     shadowRadius: 16.00,
     elevation: 24,
     borderWidth: 1.5,
-    borderColor: mainColor
+    borderColor: mainColor,
+    width: '85%'
   },
   button: {
     borderRadius: 20,

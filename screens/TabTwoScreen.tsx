@@ -23,7 +23,12 @@ const TabTwoScreen = (props: any) => {
         </View>
         :
         <>
-          <View style={{height: 61, width: '100%'}}>
+          <View style={{ width: '100%', height: 90, backgroundColor: '#000' }}>
+            <Text style={{
+              color: '#FFF',
+              fontSize: 22,
+              textAlign: 'center'
+            }}>Your Currencies</Text>
             <TitleContainer />
           </View>
           <View style={styles.titlesContainer}>

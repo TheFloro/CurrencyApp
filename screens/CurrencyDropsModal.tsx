@@ -5,11 +5,14 @@ import { useStore } from '../store/store';
 
 const CurrencyDropsModal = (props: any) => {
   const { currencyId, currentValue } = props.route.params.params;
+  const {someStore} = useStore();
 
   const [selectedValue, setSelectedValue] = useState('');
   const isEverythingAlright: boolean = (selectedValue < currentValue) && (Number(selectedValue) > 0);
 
   const checkIfEverythingIsAlirght = () => {
+    someStore.makingNewDropNotifications(currencyId, Number(selectedValue));
+    props.navigation.goBack();
   }
 
   return (
@@ -36,9 +39,8 @@ const CurrencyDropsModal = (props: any) => {
           </Pressable>
           <Pressable
             style={isEverythingAlright ? [styles.button, styles.buttonEnabled] : [styles.button, styles.buttonDissabled]}
-            onPress={() => {
-                
-            }}>
+            onPress={checkIfEverythingIsAlirght}
+            >
             <Text style={styles.textStyle}>Search</Text>
           </Pressable>
         </View>
@@ -69,7 +71,8 @@ const styles = StyleSheet.create({
     shadowRadius: 16.00,
     elevation: 24,
     borderWidth: 1.5,
-    borderColor: mainColor
+    borderColor: mainColor,
+    width: '85%'
   },
   button: {
     borderRadius: 20,
