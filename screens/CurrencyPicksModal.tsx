@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Pressable, TextInput, Platform } from 'react-native';
 import { mainColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
 const CurrencyPicksModal = (props: any) => {
   const { currencyId, currentValue } = props.route.params.params;
-  const {mainDataStore} = useStore();
+  const { mainDataStore } = useStore();
 
   const [selectedValue, setSelectedValue] = useState('');
   const isEverythingAlright: boolean = selectedValue > currentValue;
@@ -22,14 +22,14 @@ const CurrencyPicksModal = (props: any) => {
         <TextInput
           style={styles.input}
           maxLength={10}
-          keyboardType='number-pad'
+          keyboardType={Platform.Version < 26 ? 'default' : 'number-pad'}
           autoCorrect={false}
           value={selectedValue}
           onChangeText={value => { setSelectedValue(value) }}
         />
         {!isEverythingAlright &&
-            <Text style={styles.errorMessage}>Your Value must be greater then Current Value</Text>
-          }
+          <Text style={styles.errorMessage}>Your Value must be greater then Current Value</Text>
+        }
         <View style={{ flexDirection: 'row', width: 250, justifyContent: 'space-between' }}>
           <Pressable
             style={[styles.button, styles.buttonEnabled, { backgroundColor: '#D64933' }]}
@@ -38,9 +38,10 @@ const CurrencyPicksModal = (props: any) => {
             <Text style={styles.textStyle}>Close</Text>
           </Pressable>
           <Pressable
+            disabled={!isEverythingAlright}
             style={isEverythingAlright ? [styles.button, styles.buttonEnabled] : [styles.button, styles.buttonDissabled]}
             onPress={checkIfEverythingIsAlirght}
-            >
+          >
             <Text style={styles.textStyle}>Search</Text>
           </Pressable>
         </View>
