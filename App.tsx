@@ -79,7 +79,7 @@ export default observer(function App() {
 
   async function registerBackgroundFetchAsync() {
     return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-      minimumInterval: 1,
+      minimumInterval: 60*15,
       stopOnTerminate: false,
       startOnBoot: false,
     });
