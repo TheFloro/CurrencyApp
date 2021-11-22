@@ -25,7 +25,8 @@ const TitleForTabTwo = ({mainTitle, first, second, third}: TitleForTabTwoProps) 
 const styles = StyleSheet.create({
     titleContainer: {
         backgroundColor: '#000',
-        padding: 10
+        padding: 10,
+        alignItems: 'center'
     },
     titleText: {
         color: '#FFF',
@@ -39,9 +40,10 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: mainColor,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
-        backgroundColor: 'black'
+        backgroundColor: 'black',
+        width: '100%'
     }
 })
 

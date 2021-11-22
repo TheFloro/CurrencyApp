@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
       textIfEmpty: {
         textAlign: 'center',
         fontSize: 25,
-        fontFamily: 'sans-serif-light'
+        padding: 20
       }
 })
 
