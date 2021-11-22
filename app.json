@@ -4,7 +4,7 @@
     "slug": "currencyApp",
     "privacy": "public",
     "description": "An application to keep track on certain values of currencies",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/logo-icon-bigger.png",
     "scheme": "myapp",

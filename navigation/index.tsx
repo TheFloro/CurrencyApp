@@ -44,7 +44,7 @@ function RootNavigator() {
         title: 'More Info',
         headerLeft: () => (
           <Pressable
-            onPress={() => { navigation.navigate('TabOne')}}
+            onPress={() => { navigation.goBack()}}
             style={({ pressed }) => ({
               opacity: pressed ? 0.5 : 1,
               width: 50,
