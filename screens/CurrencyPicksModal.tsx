@@ -12,6 +12,7 @@ const CurrencyPicksModal = (props: any) => {
 
   const checkIfEverythingIsAlirght = () => {
     someStore.makingNewPickNotifications(currencyId, Number(selectedValue));
+    //someStore.makingNewPickNotifications(currencyId, 0.87); // just for test
     props.navigation.goBack();
   }
 

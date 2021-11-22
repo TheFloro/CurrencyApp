@@ -100,11 +100,9 @@ export default class SomeStore {
         const axios = require('axios').default;
         try {
             const response = await axios.get(`https://freecurrencyapi.net/api/v2/latest?apikey=YOUR-APIKEY&base_currency=PLN`);
-            console.log(response.data.data);
-            // this.fetchingInBackgroundData = response.data.data;
             return response.data.data;
         } catch (err) {
-            console.log(err);
+            console.log('error in Mobx fetchData', err);
         }
     }
 
@@ -296,4 +294,16 @@ export default class SomeStore {
         }
         this.reloadFlatList();
       }
+
+      notification: any = [];
+
+      async getNotification(){
+        const jsonValue = await AsyncStorage.getItem('@Notifications');
+        const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
+        this.setNotifications(a);
+    }
+
+    setNotifications(value: any){
+        this.notification = value;
+    }
 }

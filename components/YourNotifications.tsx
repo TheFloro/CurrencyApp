@@ -8,16 +8,16 @@ import YourNotificationItem from './YourNotificationItem';
 
 const YourNotifications = (props: any) => {
     const { someStore } = useStore();
-    const [notification, setNotification] = useState<any>([]);
+    // const [notification, setNotification] = useState<any>([]);
 
-    const getNotification = async () => {
-        const jsonValue = await AsyncStorage.getItem('@Notifications');
-        const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-        setNotification(a);
-    }
+    // const getNotification = async () => {
+    //     const jsonValue = await AsyncStorage.getItem('@Notifications');
+    //     const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
+    //     setNotification(a);
+    // }
 
     useEffect(() => {
-        getNotification();
+        someStore.getNotification();
     }, [someStore.makingNewPickNotifications, someStore.makingNewDropNotifications, someStore.notificationReload, someStore.reloadNotificationAction])
 
     return (
@@ -32,8 +32,8 @@ const YourNotifications = (props: any) => {
             </View>
             <View style={styles.notifications}>
                 <FlatList
-                extraData={notification}
-                    data={notification}
+                extraData={someStore.notification}
+                    data={someStore.notification}
                     keyExtractor={({ id }) => id}
                     renderItem={({ item }) => (
                         <YourNotificationItem

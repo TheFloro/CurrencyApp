@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -7,41 +6,10 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { store, StoreContext, useStore } from './store/store';
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
-import { getDate } from './components/getDate';
-import { Button, Text, View } from 'react-native';
-
-const BACKGROUND_FETCH_TASK = 'background-fetch'
-
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  const {someStore} = useStore();
-  try {
-    const receivedData = await someStore.fetchInBackground();
-    console.log("receivedData ", receivedData);
-    getLocalNotification();
-    return receivedData
-      ? BackgroundFetch.BackgroundFetchResult.NewData
-      : BackgroundFetch.BackgroundFetchResult.NoData
-  } catch (err) {
-    console.log(err)
-  }
-});
-
-const makeNotification = (title: string, body: string) => {
-  const content = { title: 'Your tracked currency reached certain value!', body: ''};
-
-  Notifications.scheduleNotificationAsync({ content, trigger: null });
-}
-
-async function registerBackgroundFetchAsync() {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 1, // 15 minutes 60*15
-    stopOnTerminate: false, // android only,
-    startOnBoot: true, // android only
-  });
-}
+import { observer } from 'mobx-react-lite';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -53,65 +21,62 @@ Notifications.setNotificationHandler({
   },
 });
 
-// const getPermission = async () => {
-//   const {status} = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-//   if (status != 'granted'){
-//     console.log("something")
-//     const {status} = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-//   }
-//   if (status != 'granted'){
-//     alert('Fail to get the permission')
-//     return;
-//   }
-//   return status;
-// }
-
-const content = { title: 'Test Notification', body: 'hey, you!' };
-
-const getLocalNotification = async () => {
-  //await getPermission();
-  var now = new Date(Date.now() + (5 * 60 * 1000));
-  console.log('5 minut w przody', now, new Date())
-  Notifications.scheduleNotificationAsync({ content, trigger: null })
-}
-
-export default function App() {
+export default observer(function App() {
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
   const [status, setStatus] = useState<BackgroundFetch.BackgroundFetchStatus | null>(null);
+  const { someStore } = useStore();
+  const BACKGROUND_FETCH_TASK = 'background-fetch'
+
+  TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+    try {
+      const receivedData = await someStore.fetchInBackground();
+      checkingForNotifications(receivedData);
+      return receivedData
+        ? BackgroundFetch.BackgroundFetchResult.NewData
+        : BackgroundFetch.BackgroundFetchResult.NoData
+    } catch (err) {
+      console.log('error in backgroundFetch)', err)
+    }
+  });
+
+  const checkingForNotifications = async (downloadedData: any) => {
+    const jsonValue = await AsyncStorage.getItem('@Notifications');
+    const notifications = (jsonValue != null ? JSON.parse(jsonValue) : null);
+    console.log('downloaded Data', downloadedData);
+    notifications.forEach((item: any) => {
+      if (downloadedData[item.id] <= item.drop) {
+        makeNotification(item.id, 'dropped', item.drop);
+        console.log('DROP Notification that certain currency just dropped to your value');
+      } else if (downloadedData[item.id] >= item.pick) {
+        makeNotification(item.id, 'picked', item.pick);
+        console.log('PICK Notification that certain currency just reached your value');
+      } else {
+        console.log('NOTHING HAPPENDS');
+      }
+    })
+  }
+
+  const makeNotification = (titleCurrency: string, changedTo: string, certainValue: number) => {
+    const content = { title: 'Your Currency just ' + changedTo, body: titleCurrency + ' just ' + changedTo + ' to ' + certainValue };
+
+    Notifications.scheduleNotificationAsync({ content, trigger: null });
+  }
 
   useEffect(() => {
     toggleFetchTask();
-    checkStatusAsync();
   }, [])
 
   const toggleFetchTask = async () => {
     await registerBackgroundFetchAsync();
-    checkStatusAsync();
   };
 
-  const checkStatusAsync = async () => {
-    const status = await BackgroundFetch.getStatusAsync();
-    const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
-    setStatus(status);
-    setIsRegistered(isRegistered);
+  async function registerBackgroundFetchAsync() {
+    return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+      minimumInterval: 1, // 15 minutes 60*15
+      stopOnTerminate: false, // android only,
+      startOnBoot: true, // android only
+    });
   }
-
-  // useEffect(() => {
-  //   registerForPushNotification().then((token) => console.log(token)).catch((err) => console.log(err))
-  // }, [])
-
-  // async function registerForPushNotification() {
-  //   const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-  //   if (status != 'granted') {
-  //     const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-  //   }
-  //   if (status != 'granted') {
-  //     alert('Fail to get the push token');
-  //     return;
-  //   }
-  //   const token = (await Notifications.getExpoPushTokenAsync()).data;
-  //   return token;
-  // }
 
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
@@ -128,4 +93,4 @@ export default function App() {
       </SafeAreaProvider>
     );
   }
-}
+})
