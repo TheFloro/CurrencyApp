@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
