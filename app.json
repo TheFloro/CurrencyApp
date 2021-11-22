@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Currency App",
+    "slug": "currencyApp",
+    "privacy": "public",
+    "description": "An application to keep track on certain values of currencies",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo-icon-bigger.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash-icon-name.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/logo-icon-bigger.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/logo-icon.png"
+    }
+  }
+}
