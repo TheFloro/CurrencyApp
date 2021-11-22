@@ -12,7 +12,6 @@ const YourNotifications = () => {
 
     useEffect(() => {
         mainDataStore.getNotification();
-        console.log(mainDataStore.notification !== null)
     }, [mainDataStore.makingNewPickNotifications, mainDataStore.makingNewDropNotifications, mainDataStore.notificationReload, mainDataStore.reloadNotificationAction])
 
     return (
