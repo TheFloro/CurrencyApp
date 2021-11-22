@@ -33,7 +33,13 @@ const dataLoader = async () =>{
   }
 }
 
- 
+const isTypeOfNan = (item: string) => {
+  if (item === 'NaN'){
+    return Number(0);
+  } else {
+    return Number(item);
+  }
+}
 
   return (
     <>
@@ -56,8 +62,8 @@ const dataLoader = async () =>{
                   id={item.id}
                   baseCurrency={mainDataStore.allInfoData.baseCurrency}
                   value={item.value}
-                  change={item.change}
-                  positivea={item.change > 0 ? true : false}
+                  change={isTypeOfNan(item.change)}
+                  positivea={isTypeOfNan(item.change) > 0 ? true : false}
                   style={{}}
                 />
               )}

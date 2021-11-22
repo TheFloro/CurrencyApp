@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     },
     moreInfoTitles: {
         fontFamily: 'sans-serif-thin',
-        fontSize: 30,
+        fontSize: 22,
     },
     text: {
-        fontSize: 20
+        fontSize: 15
     },
 })
 
