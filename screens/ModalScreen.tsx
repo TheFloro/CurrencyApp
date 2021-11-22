@@ -12,7 +12,7 @@ const ModalScreen = (props: any) => {
   const arrr = mainDataStore.dataToDisplay.find((item: any) => item.id === selectedValue)
 
   const checkForCurrency = () => {
-    props.navigation.navigate('ParticularCurrency', {
+    props.navigation.replace('ParticularCurrency', {
       screen: 'ParticularCurrency',
       params: {
         currencyId: selectedValue,
