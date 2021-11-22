@@ -47,7 +47,7 @@ const dataLoader = async () =>{
             refreshing={!isDataLoaded}
               extraData={mainDataStore.flatListReload}
               style={{ backgroundColor: mainScreenColor, marginBottom: 45 }}
-              contentContainerStyle={{alignItems: 'center'}}
+              contentContainerStyle={{alignItems: 'center', backgroundColor: mainScreenColor}}
               data={mainDataStore.dataToDisplay}
               keyExtractor={({ id }) => id}
               renderItem={({ item }) => (
