@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Pressable, TextInput, Platform } from 'react-native';
 import { mainColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
@@ -22,7 +22,7 @@ const CurrencyPicksModal = (props: any) => {
         <TextInput
           style={styles.input}
           maxLength={10}
-          keyboardType='default'
+          keyboardType={Platform.Version < 26 ? 'default' : 'number-pad'}
           autoCorrect={false}
           value={selectedValue}
           onChangeText={value => { setSelectedValue(value) }}
