@@ -1,21 +1,19 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
-
-import { Text, View } from '../components/Themed';
-import TitleContainer from '../components/titleContainer';
+import TitleForTabTwo from '../components/TitleForTabTwo';
 import YourNotifications from '../components/YourNotifications';
 import { secondScreenColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
 const TabTwoScreen = (props: any) => {
-  const { someStore } = useStore();
+  const { mainDataStore } = useStore();
 
-  const isNotEmpty: boolean = someStore.observatedCurrency.length > 0;
+  const isNotEmpty: boolean = mainDataStore.observatedCurrency.length > 0;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <YourNotifications />
       {!isNotEmpty ?
         <View style={styles.ifEmptyContainer}>
@@ -23,55 +21,32 @@ const TabTwoScreen = (props: any) => {
         </View>
         :
         <>
-          <View style={{ width: '100%', height: 90, backgroundColor: '#000' }}>
-            <Text style={{
-              color: '#FFF',
-              fontSize: 22,
-              textAlign: 'center'
-            }}>Your Currencies</Text>
-            <TitleContainer />
-          </View>
-          <View style={styles.titlesContainer}>
-            {/* <TitleToSortBy
-          sortBy={sortByCurrency}
-          title='Currency'
-          icon='sort'
-        />
-        <TitleToSortBy
-          sortBy={sortByPrice}
-          title='Price'
-          icon='sort'
-        />
-        <TitleToSortBy
-          sortBy={sortByChange}
-          title='24H Change'
-          icon='sort'
-        /> */}
-          </View>
-          <View style={{ backgroundColor: secondScreenColor }}>
-            <View style={{ marginBottom: 30 }}>
+            <TitleForTabTwo
+              mainTitle='Your Currencies'
+              first='Currency'
+              second='Price'
+              third='24H Change'
+            />
               <FlatList
                 style={{ backgroundColor: secondScreenColor }}
                 contentContainerStyle={{ alignItems: 'center' }}
-                data={someStore.observatedCurrency}
+                data={mainDataStore.observatedCurrency}
                 keyExtractor={({ id }) => id}
                 renderItem={({ item }) => (
                   <CurrencyItemOnMain
                     navigation={props.navigation}
                     id={item.id}
-                    baseCurrency={someStore.allInfoData.baseCurrency}
+                    baseCurrency={mainDataStore.allInfoData.baseCurrency}
                     value={item.value}
                     change={item.change}
-                    positive={item.change > 0 ? true : false}
-                  >
-                  </CurrencyItemOnMain>
+                    positivea={item.change > 0 ? true : false}
+                    style={{}}
+                  />
                 )}
               />
-            </View>
-          </View>
         </>
       }
-    </SafeAreaView>
+    </View>
   );
 }
 

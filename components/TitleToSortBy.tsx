@@ -1,21 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { mainColor, mainScreenColor } from '../constants/Colors';
 
-const TitleToSortBy = (props: any) => {
+interface TitleToSortByProps{
+    sortBy: any;
+    title: string;
+    icon: any;
+}
+
+const TitleToSortBy = ({sortBy, title, icon}: TitleToSortByProps) => {
     return (
         <View>
             <Pressable
-                onPress={props.sortBy}
+                onPress={sortBy}
                 style={({ pressed }) => ({
                     opacity: pressed ? 0.5 : 1,
                     flexDirection: 'row',
                     alignItems: 'center'
                 })}>
-                <Text style={styles.title}>{props.title}</Text>
+                <Text style={styles.title}>{title}</Text>
                 <FontAwesome
-                    name={props.icon}
+                    name={icon}
                     size={15}
                     color='grey'
                     style={{marginRight: 8}}

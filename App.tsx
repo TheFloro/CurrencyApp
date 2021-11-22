@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { store, StoreContext, useStore } from './store/store';
 import * as Notifications from 'expo-notifications';
@@ -22,75 +20,78 @@ Notifications.setNotificationHandler({
 });
 
 export default observer(function App() {
-  const [isRegistered, setIsRegistered] = useState<boolean>(false);
-  const [status, setStatus] = useState<BackgroundFetch.BackgroundFetchStatus | null>(null);
-  const { someStore } = useStore();
-  const BACKGROUND_FETCH_TASK = 'background-fetch'
+  const { mainDataStore } = useStore();
+  const BACKGROUND_FETCH_TASK = 'background-fetch';
+  const [isRegistered, setIsRegistered] = React.useState<boolean>(false);
+  const [status, setStatus] = React.useState<BackgroundFetch.BackgroundFetchStatus | null>(null);
 
   TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
     try {
-      const receivedData = await someStore.fetchInBackground();
-      checkingForNotifications(receivedData);
+      const receivedData = await mainDataStore.fetchInBackground();
+      if (receivedData !== undefined) {
+        checkingForNotifications(receivedData);
+      }
       return receivedData
         ? BackgroundFetch.BackgroundFetchResult.NewData
         : BackgroundFetch.BackgroundFetchResult.NoData
     } catch (err) {
-      console.log('error in backgroundFetch)', err)
+      console.log('Error trying to fetch in background)', err)
     }
   });
 
   const checkingForNotifications = async (downloadedData: any) => {
     const jsonValue = await AsyncStorage.getItem('@Notifications');
     const notifications = (jsonValue != null ? JSON.parse(jsonValue) : null);
-    console.log('downloaded Data', downloadedData);
     notifications.forEach((item: any) => {
-      if (downloadedData[item.id] <= item.drop) {
-        makeNotification(item.id, 'dropped', item.drop);
-        console.log('DROP Notification that certain currency just dropped to your value');
-      } else if (downloadedData[item.id] >= item.pick) {
-        makeNotification(item.id, 'picked', item.pick);
-        console.log('PICK Notification that certain currency just reached your value');
-      } else {
-        console.log('NOTHING HAPPENDS');
+      if (item.drop !== null) {
+        if (downloadedData[item.id] <= item.drop) {
+          makeNotification(item.id, 'dropped', item.drop);
+        }
+      }
+      if (item.pick !== null) {
+        if (downloadedData[item.id] >= item.pick) {
+          makeNotification(item.id, 'picked', item.pick);
+        }
       }
     })
   }
 
   const makeNotification = (titleCurrency: string, changedTo: string, certainValue: number) => {
     const content = { title: 'Your Currency just ' + changedTo, body: titleCurrency + ' just ' + changedTo + ' to ' + certainValue };
-
     Notifications.scheduleNotificationAsync({ content, trigger: null });
   }
 
   useEffect(() => {
-    toggleFetchTask();
+    checkStatusAsync();
   }, [])
 
-  const toggleFetchTask = async () => {
-    await registerBackgroundFetchAsync();
+  const checkStatusAsync = async () => {
+    const status = await BackgroundFetch.getStatusAsync();
+    const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
+    setStatus(status);
+    setIsRegistered(isRegistered);
+    if (isRegistered) {
+     TaskManager.unregisterAllTasksAsync();
+     await registerBackgroundFetchAsync();
+    }
+     await registerBackgroundFetchAsync();
   };
 
   async function registerBackgroundFetchAsync() {
     return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-      minimumInterval: 1, // 15 minutes 60*15
-      stopOnTerminate: false, // android only,
-      startOnBoot: true, // android only
+      minimumInterval: 1,
+      stopOnTerminate: false,
+      startOnBoot: false,
     });
-  }
+  };
 
-  const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
+  return (
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
-    return (
-
-      <SafeAreaProvider>
-        <StoreContext.Provider value={store}>
-          <Navigation colorScheme={colorScheme} />
-        </StoreContext.Provider>
-      </SafeAreaProvider>
-    );
-  }
-})
+    <SafeAreaProvider>
+      <StoreContext.Provider value={store}>
+        <Navigation />
+      </StoreContext.Provider>
+    </SafeAreaProvider>
+  );
+}
+)

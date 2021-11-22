@@ -1,42 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, View } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
-import { View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
 import { useStore } from '../store/store';
-import TitleToSortBy from '../components/TitleToSortBy';
 import { observer } from 'mobx-react-lite';
 import { getDate } from '../components/getDate';
 import TitleContainer from '../components/titleContainer';
 import { mainScreenColor } from '../constants/Colors';
 
-const TabOneScreen = (props: any, navigation: RootTabScreenProps<'TabOne'>) => {
-
-  const { someStore } = useStore();
-
-  const [sortCurrency, setSortCurrency] = useState(true);
-  const [sortPrice, setSortPrice] = useState(true);
-  const [sortChange, setSortChange] = useState(true);
-
+const TabOneScreen = (props: any) => {
+  const { mainDataStore } = useStore();
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     if (!isDataLoaded) {
       dataLoader();
     }
-    //someStore.fetchInBackground();
-  }, [])
+  }, [isDataLoaded])
 
  useEffect(() => {
-   if (!someStore.isEverythingFetching){
-     someStore.updateObservatedCurrency();
+   if (!mainDataStore.isEverythingFetching){
+    mainDataStore.updateObservatedCurrency();
    }   
- }, [someStore.isEverythingFetching, someStore.updateObservatedCurrencyArray])
+ }, [mainDataStore.isEverythingFetching, mainDataStore.updateObservatedCurrencyArray])
   
 const dataLoader = async () =>{
   try {
-    await someStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
+    await mainDataStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
     setIsDataLoaded(true);
   } catch (e) {
     console.log(e, 'error in dataLoader');
@@ -51,22 +41,24 @@ const dataLoader = async () =>{
         <TitleContainer />
       </View>
       <View style={styles.container}>
-        {/* {isLoading ? <Text>Loading...</Text> :  */}
-          <View style={{ marginBottom: 30, backgroundColor: mainScreenColor }}>
+          <View style={{backgroundColor: mainScreenColor }}>
             <FlatList
-              extraData={someStore.flatListReload}
-              style={{ backgroundColor: mainScreenColor, marginBottom: 30 }}
+            onRefresh={() => {setIsDataLoaded(false);}}
+            refreshing={!isDataLoaded}
+              extraData={mainDataStore.flatListReload}
+              style={{ backgroundColor: mainScreenColor, marginBottom: 45 }}
               contentContainerStyle={{alignItems: 'center'}}
-              data={someStore.dataToDisplay}
+              data={mainDataStore.dataToDisplay}
               keyExtractor={({ id }) => id}
               renderItem={({ item }) => (
                 <CurrencyItemOnMain
                   navigation={props.navigation}
                   id={item.id}
-                  baseCurrency={someStore.allInfoData.baseCurrency}
+                  baseCurrency={mainDataStore.allInfoData.baseCurrency}
                   value={item.value}
                   change={item.change}
-                  positive={item.change > 0 ? true : false}
+                  positivea={item.change > 0 ? true : false}
+                  style={{}}
                 />
               )}
             />

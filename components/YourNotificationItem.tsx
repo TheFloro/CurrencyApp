@@ -1,19 +1,26 @@
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
-const YourNotificationItem = (props: any) => {
+interface YourNotificationItemProps {
+    id: string;
+    baseCurrency: string;
+    pick: string;
+    drop: string;
+}
+
+const YourNotificationItem = ({id, baseCurrency, pick, drop}: YourNotificationItemProps) => {
     return (
         <View style={styles.container}>
             <View style={styles.item}>
                 <View style={styles.textContainer}>
-                    <Text style={styles.itemText}>{props.id}/</Text>
-                    <Text style={{ textAlignVertical: 'bottom', fontSize: 10 }}>{props.baseCurrency}</Text>
+                    <Text style={styles.itemText}>{id}/</Text>
+                    <Text style={{ textAlignVertical: 'bottom', fontSize: 10 }}>{baseCurrency}</Text>
                 </View>
                 <View style={styles.textContainer}>
-                    <Text style={styles.itemText}>{props.pick}</Text>
+                    <Text style={styles.itemText}>{pick}</Text>
                 </View>
                 <View style={styles.textContainer}>
-                    <Text style={styles.itemText}>{props.drop}</Text>
+                    <Text style={styles.itemText}>{drop}</Text>
                 </View>
             </View>
         </View>
@@ -35,7 +42,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.29,
         shadowRadius: 4.65,
         elevation: 4,
-        width: '90%',
+        width: '85%',
         alignSelf: 'center',
         padding: 10,
     },
@@ -44,7 +51,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     itemText: {
-        fontSize: 14,
+        fontSize: 18,
     },
     textContainer: {
         flexDirection: 'row',

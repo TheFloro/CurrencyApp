@@ -17,10 +17,8 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   ParticularCurrency: undefined;
   Modal: undefined;
-  ChangeCurrency: undefined;
   CurrencyPicksModal: undefined;
   CurrencyDropsModal: undefined;
-  NotFound: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

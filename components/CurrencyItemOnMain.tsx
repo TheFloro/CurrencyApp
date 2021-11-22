@@ -1,19 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { mainScreenColor } from '../constants/Colors';
 
-const CurrencyItemOnMain = (props: any) => {
-    const [positive, setPositive] = useState(props.positive);
-    //setPositive(props.positive)
+interface CurrencyItemOnMainProps {
+    positivea: boolean;
+    navigation: any;
+    id: string;
+    baseCurrency: string;
+    value: number;
+    change: number;
+    style: any;
+}
+
+const CurrencyItemOnMain = ({positivea, navigation, id, baseCurrency, value, change, style} :CurrencyItemOnMainProps) => {
+    const positive = positivea;
+
     return (
         <View style={styles.container}>
         <Pressable 
         onPress={() => {
-            props.navigation.navigate('ParticularCurrency', {
+            navigation.navigate('ParticularCurrency', {
                 screen: 'ParticularCurrency',
                 params: {
-                    currencyId: props.id,
-                    baseCurrency: props.baseCurrency,
-                    currentValue: props.value
+                    currencyId: id,
+                    baseCurrency: baseCurrency,
+                    currentValue: value
                 }
             })
         }}
@@ -25,16 +36,16 @@ const CurrencyItemOnMain = (props: any) => {
             borderRadius: 25,
           })}
         >
-            <View style={{ ...styles.item, ...props.style }}>
+            <View style={{ ...styles.item, ...style }}>
                 <View style={styles.currency}>
-                    <Text style={styles.itemText}>{props.id}/</Text>
-                    <Text style={{ textAlignVertical: 'bottom', fontSize: 12 }}>{props.baseCurrency}</Text>
+                    <Text style={styles.itemText}>{id}/</Text>
+                    <Text style={{ textAlignVertical: 'bottom', fontSize: 12 }}>{baseCurrency}</Text>
                 </View>
                 <View style={styles.price}>
-                    <Text style={styles.itemText}>{props.value}</Text>
+                    <Text style={styles.itemText}>{value}</Text>
                 </View>
                 <View style={positive ? styles.change : styles.changeNegative}>
-                    <Text style={styles.changeText}>{props.change}%</Text>
+                    <Text style={styles.changeText}>{change}%</Text>
                 </View>
             </View>
             
@@ -48,7 +59,7 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         borderWidth: 2,
         borderColor: 'rgba(155,155,155,0.1)',
-        backgroundColor: 'white',
+        backgroundColor: mainScreenColor,
         borderRadius: 25,
         shadowColor: "#134611",
         shadowOffset: {

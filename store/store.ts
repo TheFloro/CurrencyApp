@@ -1,12 +1,12 @@
 import { createContext, useContext } from "react";
-import SomeStore from "./someStore";
+import MainDataStore from "./mainDataStore";
 
 interface Store {
-    someStore: SomeStore
+    mainDataStore: MainDataStore
 }
 
 export const store: Store = {
-    someStore: new SomeStore()
+    mainDataStore: new MainDataStore()
 }
 
 export const StoreContext = createContext(store);

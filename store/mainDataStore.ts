@@ -1,9 +1,14 @@
-import { action, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default class SomeStore {
+export default class MainDataStore {
     isEverythingFetching: boolean = false;
+    flatListReload: boolean = false;
+    notificationReload: boolean = false;
+    sortPrice: boolean = false;
+    sortCurrency: boolean = true;
+    sortChange: boolean = false;
     todayData: any = [];
     yesterdayData: any = [];
     dataToDisplay: any = [];
@@ -11,10 +16,6 @@ export default class SomeStore {
     observatedKeys: any = [];
     fetchedData: any = [];
     allInfoData: any = [];
-
-    flatListReload: boolean = false;
-    notificationReload: boolean = false;
-
     fetchingInBackgroundData: any = [];
 
     constructor() {
@@ -22,47 +23,29 @@ export default class SomeStore {
     }
 
     async toggleObservatedCurrency(currentId: string) {
-        // let keys = [];
-        // keys = await AsyncStorage.getAllKeys();
-        // try {
-        //     if (currentId === this.observatedKeys.find((item: any) => item === currentId)) {
-        //         await AsyncStorage.removeItem(currentId);
-        //     } else {
-        //         await AsyncStorage.setItem(currentId, 'id')
-        //     }
-        // } catch (e) {
-        //     console.log('error', e)
-        // }
-        // keys = await AsyncStorage.getAllKeys();
-        // this.changeKeys(keys);
         this.refreshingData();
 
         const jsonValue = await AsyncStorage.getItem('@tracked');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-        //a will have to be from mobx - to let know useEffect in depedency that it has to make an action
         try {
             if (a !== null) {
                 const existingIndex = a.findIndex((item: any) => item === currentId);
-                //console.log(existingIndex, 'existingIndex', a, 'a')
 
                 if (existingIndex >= 0) {
                     a.splice(existingIndex, 1);
                     const c = JSON.stringify(a);
                     await AsyncStorage.setItem('@tracked', c);
-                    //  console.log(a, 'b - existing')
                 } else {
                     const b = [...a];
                     b.push(currentId);
                     const c = JSON.stringify(b);
                     await AsyncStorage.setItem('@tracked', c);
-                    //  console.log(b, 'b - tableNOTnull')
                 }
             } else {
                 const b = [];
                 b.push(currentId);
                 const c = JSON.stringify(b);
                 await AsyncStorage.setItem('@tracked', c);
-                //  console.log(b, 'b - tableIsNull')
             }
         } catch (e) {
             Alert.alert("I am sorry, we cannot add this to your tracked list");
@@ -79,7 +62,6 @@ export default class SomeStore {
             const jsonValue = await AsyncStorage.getItem('@tracked');
             const keys = (jsonValue != null ? JSON.parse(jsonValue) : null);
             if (keys !== null) {
-                // this.observatedCurrency = this.observatedKeys.map((currencyId: any) => this.dataToDisplay.find((item: any) => item.id === currencyId));
                 const updatedValue = await keys.map((item: any) => this.dataToDisplay.find((otherItem: any) => otherItem.id === item));
                 this.updateObservatedCurrencyArray(updatedValue);
             }
@@ -102,13 +84,11 @@ export default class SomeStore {
             const response = await axios.get(`https://freecurrencyapi.net/api/v2/latest?apikey=YOUR-APIKEY&base_currency=PLN`);
             return response.data.data;
         } catch (err) {
-            console.log('error in Mobx fetchData', err);
+            console.log('Eroor while fetching in Background', err);
         }
     }
 
     async fetchingDataOfTenLastDays(currency: string, dateFrom: string, dateTo: string) {
-        //await AsyncStorage.clear() //for now
-
         const axios = require('axios').default;
         let keys = [];
         keys = await AsyncStorage.getAllKeys();
@@ -126,10 +106,10 @@ export default class SomeStore {
             }
             this.allInfoData = { data: this.fetchedData, baseCurrency: response.data.query.base_currency }
 
-            for (const [id, value] of Object.entries(this.allInfoData.data[9].value)) {  //9 is today (last date)
+            for (const [id, value] of Object.entries(this.allInfoData.data[9].value)) {
                 this.todayData.push({ id: id, value: value })
             }
-            for (const [id, value] of Object.entries(this.allInfoData.data[8].value)) {  //8 is yestarday (if this is looking at 10 days back ofc)
+            for (const [id, value] of Object.entries(this.allInfoData.data[8].value)) {
                 this.yesterdayData.push({ id: id, value: value })
             }
             this.yesterdayData.sort((a: any, b: any) => {
@@ -167,7 +147,6 @@ export default class SomeStore {
         this.reloadNotificationAction();
         const jsonValue = await AsyncStorage.getItem('@Notifications');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-        //a will have to be from mobx - to let know useEffect in depedency that it has to make an action
         try {
             if (a !== null) {
                 const existingIndex = a.findIndex((item: any) => item.id === currentId);
@@ -200,7 +179,6 @@ export default class SomeStore {
         this.reloadNotificationAction();
         const jsonValue = await AsyncStorage.getItem('@Notifications');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-        //a will have to be from mobx - to let know useEffect in depedency that it has to make an action
         try {
             if (a !== null) {
                 const existingIndex = a.findIndex((item: any) => item.id === currentId);
@@ -243,9 +221,6 @@ export default class SomeStore {
         this.reloadNotificationAction();
     }
 
-    sortPrice: boolean = false;
-    sortCurrency: boolean = true;
-    sortChange: boolean = false;
 
     sortByPrice() {
         this.reloadFlatList();

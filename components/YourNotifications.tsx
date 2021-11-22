@@ -1,68 +1,62 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
-import { mainScreenColor } from '../constants/Colors';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useStore } from '../store/store';
+import TitleForTabTwo from './TitleForTabTwo';
 import YourNotificationItem from './YourNotificationItem';
 
-const YourNotifications = (props: any) => {
-    const { someStore } = useStore();
-    // const [notification, setNotification] = useState<any>([]);
-
-    // const getNotification = async () => {
-    //     const jsonValue = await AsyncStorage.getItem('@Notifications');
-    //     const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-    //     setNotification(a);
-    // }
+const YourNotifications = () => {
+    const { mainDataStore } = useStore();
 
     useEffect(() => {
-        someStore.getNotification();
-    }, [someStore.makingNewPickNotifications, someStore.makingNewDropNotifications, someStore.notificationReload, someStore.reloadNotificationAction])
+        mainDataStore.getNotification();
+    }, [mainDataStore.makingNewPickNotifications, mainDataStore.makingNewDropNotifications, mainDataStore.notificationReload, mainDataStore.reloadNotificationAction])
 
     return (
-        <View style={styles.container}>
-            <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>Your Notifications</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={styles.titleText}>Currency</Text>
-                    <Text style={styles.titleText}>Pick</Text>
-                    <Text style={styles.titleText}>Drop</Text>
-                </View>
-            </View>
-            <View style={styles.notifications}>
+        <View style={{height: '50%'}}>
+            <TitleForTabTwo
+                mainTitle='Your Notifications'
+                first='Currency'
+                second='Pick'
+                third='Drop'
+            />
                 <FlatList
-                extraData={someStore.notification}
-                    data={someStore.notification}
+                    extraData={mainDataStore.notification}
+                    data={mainDataStore.notification}
                     keyExtractor={({ id }) => id}
                     renderItem={({ item }) => (
                         <YourNotificationItem
                             id={item.id}
                             pick={item.pick}
                             drop={item.drop}
-                            baseCurrency={someStore.allInfoData.baseCurrency}
+                            baseCurrency={mainDataStore.allInfoData.baseCurrency}
                         />
                     )}
                 />
-                <Button title='Clear your Notification' onPress={() => someStore.clearNotifications()} />
-            </View>
+                <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <TouchableOpacity style={styles.notficationButton} onPress={() => mainDataStore.clearNotifications()}>
+                    <Text style={styles.notificationText}>Clear all your Notifications</Text>
+                </TouchableOpacity>
+                </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
+    notficationButton: {
+        padding: 10,
+        borderRadius: 20,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        width: '50%',
+        margin: 1
     },
-    titleContainer: {
-        backgroundColor: '#000',
-        padding: 10
-    },
-    titleText: {
-        color: '#FFF',
-        fontSize: 22,
-        textAlign: 'center'
-    },
-    notifications: {
+    notificationText: {
+        fontSize: 15,
+        textAlign: 'center',
+        color: 'gold'
     }
 })
 

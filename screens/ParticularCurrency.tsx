@@ -10,25 +10,25 @@ import { mainColor, mainScreenColor } from '../constants/Colors';
 
 const ParticularCurrency = (props: any) => {
     const { currencyId, baseCurrency, currentValue } = props.route.params.params;
-    const { someStore } = useStore();
-    const lastDaysPrices = [...someStore.changingDataForLastDays(currencyId)];
+    const { mainDataStore } = useStore();
+    const lastDaysPrices = [...mainDataStore.changingDataForLastDays(currencyId)];
 
     const lowestDropPrice = Math.min(...lastDaysPrices);
     const highestPicPrice = Math.max(...lastDaysPrices);
     //[0] is Xdays ago, [length-1] is current
     const percantageChange = (((lastDaysPrices[lastDaysPrices.length - 1] - lastDaysPrices[lastDaysPrices.length - 2]) * 2) / (lastDaysPrices[lastDaysPrices.length - 1] + lastDaysPrices[lastDaysPrices.length - 2])).toFixed(8)
-    const dates = someStore.allInfoData.data.map((item: any) => item.date);
+    const dates = mainDataStore.allInfoData.data.map((item: any) => item.date);
     let currentCurrencyIsObservated: any = [];
     useEffect(() => {
-        currentCurrencyIsObservated = someStore.observatedCurrency.some((item: any) => item.id === currencyId);
-    }, [someStore.observatedCurrency])
+        currentCurrencyIsObservated = mainDataStore.observatedCurrency.some((item: any) => item.id === currencyId);
+    }, [mainDataStore.observatedCurrency])
 
 
     useEffect(() => {
         props.navigation.setOptions({
             headerRight: () => (
                 <Pressable
-                    onPress={() => { someStore.toggleObservatedCurrency(currencyId) }}
+                    onPress={() => { mainDataStore.toggleObservatedCurrency(currencyId) }}
                     style={({ pressed }) => ({
                         opacity: pressed ? 0.5 : 1,
                         marginRight: 15,
@@ -70,12 +70,9 @@ const ParticularCurrency = (props: any) => {
                             backgroundColor: "green",
                             backgroundGradientFrom: "grey",
                             backgroundGradientTo: "#A2D3C2",
-                            decimalPlaces: 2, // optional, defaults to 2dp
+                            decimalPlaces: 2,
                             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                             labelColor: (opacity = 1) => `rgba(25, 0, 0, ${opacity})`,
-                            style: {
-                                // borderRadius: 16
-                            },
                             propsForDots: {
                                 r: "5",
                                 strokeWidth: "3",
@@ -97,36 +94,31 @@ const ParticularCurrency = (props: any) => {
                         <ParticularCurrencyInfo
                             titleText='Highest Pick'
                             insideText={highestPicPrice}
+                            addicionalSymbol=''
                             style={{ backgroundColor: 'black', color: 'green' }}
-                            margin={{}}
                         />
                         <ParticularCurrencyInfo
                             titleText='Lowest Drop'
                             insideText={lowestDropPrice}
+                            addicionalSymbol=''
                             style={{ backgroundColor: 'black', color: 'red' }}
-                            margin={{}}
                         />
                     </View>
                     <View style={styles.percentageContainer}>
                         <ParticularCurrencyInfo
                             titleText='Current'
                             insideText={currentValue}
+                            addicionalSymbol=''
                             style={{ backgroundColor: 'black', color: 'white' }}
-                            margin={{}}
                         />
                         <ParticularCurrencyInfo
                             titleText='Percent 24h'
                             insideText={percantageChange}
                             addicionalSymbol='%'
                             style={{ backgroundColor: 'black', color: '#80A1D4' }}
-                            margin={{}}
                         />
                     </View>
                 </View>
-                {/* <View style={styles.notificationContainer}>
-                    <NotificationButton text='Get Notification when currency picks' />
-                    <NotificationButton text='Get Notification when currency drops' />
-                </View> */}
                 <View style={styles.notificationContainer}>
                     <View style={{ flex: 1 }}>
                         <View style={styles.getNotification}>
@@ -137,7 +129,7 @@ const ParticularCurrency = (props: any) => {
                         <NotificationButton
                             icon='long-arrow-up'
                             text='Currency picks'
-                            styles={{ borderColor: 'green' }}
+                            style={{ borderColor: 'green' }}
                             iconStyles={{ color: 'green' }}
                             onClick={() => {
                                 props.navigation.navigate('CurrencyPicksModal', {
@@ -152,7 +144,7 @@ const ParticularCurrency = (props: any) => {
                         <NotificationButton
                             icon='long-arrow-down'
                             text='Currency drops'
-                            styles={{ borderColor: 'red' }}
+                            style={{ borderColor: 'red' }}
                             iconStyles={{ color: 'red' }}
                             onClick={() => {
                                 props.navigation.navigate('CurrencyDropsModal', {
@@ -176,11 +168,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     graph: {
-        flex: 1,
-        // borderWidth: 3,
-        // borderColor: 'black',
-        // marginTop: 5,
-        // marginHorizontal: 5
+        flex: 1
     },
     moreInfoContainer: {
         flex: 2,
@@ -203,23 +191,16 @@ const styles = StyleSheet.create({
     },
     pickDropContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         height: 100,
     },
     percentageContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         height: 100,
     },
-    // notificationContainer: {
-    //     flex: 1,
-    //     justifyContent: 'space-evenly',
-    //     alignItems: 'stretch',
-    //     backgroundColor: mainScreenColor,
-    //     //'#488B49'
-    // },
     notificationContainer: {
         flex: 1,
         flexDirection: 'row',
@@ -229,7 +210,7 @@ const styles = StyleSheet.create({
     getNotification: {
         borderColor: 'grey',
         borderRadius: 20,
-        backgroundColor: 'rgba(1,1,1,0.5)',
+        backgroundColor: 'black',
         justifyContent: 'center',
         padding: 10,
         borderWidth: 1

@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Modal, Pressable, Alert, FlatList, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
 import { mainColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 
 const CurrencyPicksModal = (props: any) => {
   const { currencyId, currentValue } = props.route.params.params;
-  const {someStore} = useStore();
+  const {mainDataStore} = useStore();
 
   const [selectedValue, setSelectedValue] = useState('');
   const isEverythingAlright: boolean = selectedValue > currentValue;
 
   const checkIfEverythingIsAlirght = () => {
-    someStore.makingNewPickNotifications(currencyId, Number(selectedValue));
-    //someStore.makingNewPickNotifications(currencyId, 0.87); // just for test
+    mainDataStore.makingNewPickNotifications(currencyId, Number(selectedValue));
     props.navigation.goBack();
   }
 
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "lightgreen", //313d5a //344966 //supiicolor #2b4162
+    backgroundColor: "#d2ffcc", //313d5a //344966 //supiicolor #2b4162
     borderRadius: 20,
     padding: 25,
     alignItems: "center",
