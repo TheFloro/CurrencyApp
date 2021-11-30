@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, FlatList, View, Alert, Text } from 'react-native';
+import { StyleSheet, FlatList, View, Alert, Text, RefreshControl } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
 import { useStore } from '../store/store';
@@ -11,14 +11,18 @@ import * as Network from 'expo-network';
 
 const TabOneScreen = (props: any) => {
   const { mainDataStore } = useStore();
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  //const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [isInternet, setIsInternet] = useState<boolean | undefined>(false);
 
+  // useEffect(() => {
+  //   if (!isDataLoaded) {
+  //     dataLoader();
+  //   }
+  // }, [isDataLoaded])
+
   useEffect(() => {
-    if (!isDataLoaded) {
-      dataLoader();
-    }
-  }, [isDataLoaded])
+    dataLoader();
+  }, []);
 
   useEffect(() => {
     if (!mainDataStore.isEverythingFetching) {
@@ -31,7 +35,8 @@ const TabOneScreen = (props: any) => {
       const internetConnection = await Network.getNetworkStateAsync();
       setIsInternet(internetConnection.isInternetReachable);
       await mainDataStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
-      setIsDataLoaded(true);
+      //setIsDataLoaded(true);
+      console.log('dataLoader NOW');
     } catch (e) {
       Alert.alert('I am sorry there was a problem with your connection or database')
     }
@@ -58,9 +63,15 @@ const TabOneScreen = (props: any) => {
           :
           <View style={{ backgroundColor: mainScreenColor }}>
             <FlatList
-              onRefresh={() => { setIsDataLoaded(false); }}
-              refreshing={!isDataLoaded}
-              extraData={mainDataStore.flatListReload}
+              // onRefresh={() => { setIsDataLoaded(false); }}
+              // refreshing={!isDataLoaded}
+              // extraData={mainDataStore.flatListReload}
+              refreshControl={
+                <RefreshControl 
+                  refreshing={mainDataStore.flatListReload}
+                  onRefresh={dataLoader}
+                />
+              }
               style={{ backgroundColor: mainScreenColor, marginBottom: 45 }}
               contentContainerStyle={{ alignItems: 'center', backgroundColor: mainScreenColor }}
               data={mainDataStore.dataToDisplay}
