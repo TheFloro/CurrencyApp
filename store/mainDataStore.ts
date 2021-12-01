@@ -4,10 +4,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class MainDataStore {
     isEverythingFetching: boolean = false;
-    flatListReload: boolean = false;
+    refreshing: boolean = false;
     notificationReload: boolean = false;
     sortPrice: boolean = false;
-    sortCurrency: boolean = true;
+    sortCurrency: boolean = false;
     sortChange: boolean = false;
     todayData: any = [];
     yesterdayData: any = [];
@@ -17,15 +17,16 @@ export default class MainDataStore {
     fetchedData: any = [];
     allInfoData: any = [];
     fetchingInBackgroundData: any = [];
+    notification: any = [];
 
     constructor() {
         makeAutoObservable(this)
     }
 
-    async toggleObservatedCurrency(currentId: string) {
-        this.refreshingData();
+    *toggleObservatedCurrency(currentId: string): any {
+        this.isEverythingFetching = true;
 
-        const jsonValue = await AsyncStorage.getItem('@tracked');
+        const jsonValue = yield AsyncStorage.getItem('@tracked');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
         try {
             if (a !== null) {
@@ -34,78 +35,65 @@ export default class MainDataStore {
                 if (existingIndex >= 0) {
                     a.splice(existingIndex, 1);
                     const c = JSON.stringify(a);
-                    await AsyncStorage.setItem('@tracked', c);
+                    yield AsyncStorage.setItem('@tracked', c);
                 } else {
                     const b = [...a];
                     b.push(currentId);
                     const c = JSON.stringify(b);
-                    await AsyncStorage.setItem('@tracked', c);
+                    yield AsyncStorage.setItem('@tracked', c);
                 }
             } else {
                 const b = [];
                 b.push(currentId);
                 const c = JSON.stringify(b);
-                await AsyncStorage.setItem('@tracked', c);
+                yield AsyncStorage.setItem('@tracked', c);
             }
         } catch (e) {
             Alert.alert("I am sorry, we cannot add this to your tracked list");
         }
-        this.refreshingData();
+        this.isEverythingFetching = false;
     }
 
-    changeKeys(newValue: any) {
-        this.observatedKeys = newValue;
-    }
-
-    async updateObservatedCurrency() {
+    *updateObservatedCurrency(): any {
         try {
-            const jsonValue = await AsyncStorage.getItem('@tracked');
+            const jsonValue = yield AsyncStorage.getItem('@tracked');
             const keys = (jsonValue != null ? JSON.parse(jsonValue) : null);
             if (keys !== null) {
-                const updatedValue = await keys.map((item: any) => this.dataToDisplay.find((otherItem: any) => otherItem.id === item));
-                this.updateObservatedCurrencyArray(updatedValue);
+                const updatedValue = yield keys.map((item: any) => this.dataToDisplay.find((otherItem: any) => otherItem.id === item));
+                this.observatedCurrency = updatedValue;
             }
         } catch (e) {
             Alert.alert("I am so sorry, there was a problem with updating your Tracked Currencies");
         }
     }
 
-    updateObservatedCurrencyArray(newValue: any) {
-        this.observatedCurrency = newValue;
-    }
-
-    reloadFlatList() {
-        this.flatListReload = !this.flatListReload;
-    }
-
-    async fetchInBackground() {
+    *fetchInBackground(): any {
         const axios = require('axios').default;
         try {
-            const response = await axios.get(`https://freecurrencyapi.net/api/v2/latest?apikey=YOUR-APIKEY&base_currency=PLN`);
+            const response = yield axios.get(`https://freecurrencyapi.net/api/v2/latest?apikey=YOUR-APIKEY&base_currency=PLN`);
             return response.data.data;
         } catch (err) {
             console.log('Eroor while fetching in Background', err);
         }
     }
 
-    async fetchingDataOfTenLastDays(currency: string, dateFrom: string, dateTo: string) {
+    *fetchingDataOfTenLastDays(currency: string, dateFrom: string, dateTo: string): any {
         const axios = require('axios').default;
         let keys = [];
-        keys = await AsyncStorage.getAllKeys();
-        this.changeKeys(keys);
-        this.reloadFlatList()
+        keys = yield AsyncStorage.getAllKeys();
+        this.observatedKeys = keys;
+        this.refreshing = true;
         this.fetchedData.length = 0;
         this.todayData.length = 0;
         this.yesterdayData.length = 0;
         this.dataToDisplay.length = 0;
         this.allInfoData.length = 0;
         try {
-            const response = await axios.get(`https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=${currency}&date_from=${dateFrom}&date_to=${dateTo}`);
+            const response = yield axios.get(`https://freecurrencyapi.net/api/v2/historical?apikey=fe01c280-43d8-11ec-b6f7-0bd38475eeb3&base_currency=${currency}&date_from=${dateFrom}&date_to=${dateTo}`);
             for (const [date, value] of Object.entries(response.data.data)) {
                 this.fetchedData.push({ date, value })
             }
             this.allInfoData = { data: this.fetchedData, baseCurrency: response.data.query.base_currency }
-
             for (const [id, value] of Object.entries(this.allInfoData.data[9].value)) {
                 this.todayData.push({ id: id, value: value })
             }
@@ -127,13 +115,8 @@ export default class MainDataStore {
         } catch (e) {
             Alert.alert("I am so sorry, data of last days couldn't be fetched");
         }
-        this.reloadFlatList();
+        this.refreshing = false;
         this.updateObservatedCurrency();
-
-    }
-
-    refreshingData() {
-        this.isEverythingFetching = !this.isEverythingFetching;
     }
 
     changingDataForLastDays(currencyId: string) {
@@ -143,9 +126,9 @@ export default class MainDataStore {
         return historicalDataTotal;
     }
 
-    async makingNewPickNotifications(currentId: string, value: number) {
-        this.reloadNotificationAction();
-        const jsonValue = await AsyncStorage.getItem('@Notifications');
+    *makingNewPickNotifications(currentId: string, value: number): any {
+        this.notificationReload = true;
+        const jsonValue = yield AsyncStorage.getItem('@Notifications');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
         try {
             if (a !== null) {
@@ -157,27 +140,27 @@ export default class MainDataStore {
                     a.splice(existingIndex, 1);
                     a.push({ id: currentId, pick: value, drop: drop });
                     const c = JSON.stringify(a);
-                    await AsyncStorage.setItem('@Notifications', c)
+                    yield AsyncStorage.setItem('@Notifications', c)
                 } else {
                     a.push({ id: currentId, pick: value, drop: null });
                     const c = JSON.stringify(a);
-                    await AsyncStorage.setItem('@Notifications', c)
+                    yield AsyncStorage.setItem('@Notifications', c)
                 }
             } else {
                 let b = [];
                 b.push({ id: currentId, pick: value, drop: null })
                 const c = JSON.stringify(b);
-                await AsyncStorage.setItem('@Notifications', c)
+                yield AsyncStorage.setItem('@Notifications', c)
             }
         } catch (e) {
             Alert.alert("I am sorry, occured a problem with setting notifications");
         }
-        this.reloadNotificationAction();
+        this.notificationReload = false;
     }
 
-    async makingNewDropNotifications(currentId: string, value: number) {
-        this.reloadNotificationAction();
-        const jsonValue = await AsyncStorage.getItem('@Notifications');
+    *makingNewDropNotifications(currentId: string, value: number): any {
+        this.notificationReload = true;
+        const jsonValue = yield AsyncStorage.getItem('@Notifications');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
         try {
             if (a !== null) {
@@ -189,96 +172,81 @@ export default class MainDataStore {
                     a.splice(existingIndex, 1);
                     a.push({ id: currentId, pick: pick, drop: value });
                     const c = JSON.stringify(a);
-                    await AsyncStorage.setItem('@Notifications', c)
+                    yield AsyncStorage.setItem('@Notifications', c)
                 } else {
                     a.push({ id: currentId, pick: null, drop: value });
                     const c = JSON.stringify(a);
-                    await AsyncStorage.setItem('@Notifications', c)
+                    yield AsyncStorage.setItem('@Notifications', c)
                 }
             } else {
                 let b = [];
                 b.push({ id: currentId, pick: null, drop: value })
                 const c = JSON.stringify(b);
-                await AsyncStorage.setItem('@Notifications', c)
+                yield AsyncStorage.setItem('@Notifications', c)
             }
         } catch (e) {
             Alert.alert("I am sorry, occured a problem with setting notifications");
         }
-        this.reloadNotificationAction();
+        this.notificationReload = false;
     }
 
-    reloadNotificationAction() {
-        this.notificationReload = !this.notificationReload;
-    }
-
-    async clearNotifications() {
-        this.reloadNotificationAction();
+    *clearNotifications() {
+        this.notificationReload = true;
         try {
-            await AsyncStorage.removeItem('@Notifications');
+            yield AsyncStorage.removeItem('@Notifications');
         } catch (e) {
             Alert.alert('Something went wrong while clearing Notifications')
         }
-        this.reloadNotificationAction();
+        this.notificationReload = false;
     }
 
-
-    sortByPrice() {
-        this.reloadFlatList();
-        this.sortCurrency = false;
-        this.sortChange = false;
-        if (this.sortPrice) {
-            this.dataToDisplay.sort(function (a: any, b: any) { return b.value - a.value })
-            this.sortPrice = false;
-        } else {
-            this.dataToDisplay.sort(function (a: any, b: any) { return a.value - b.value })
-            this.sortPrice = true;
-        }
-        this.reloadFlatList();
-    }
-
-     sortByCurrency = () => {
-        this.reloadFlatList();
-        this.sortPrice = false;
-        this.sortChange = false;
-        if (this.sortCurrency) {
-          this.dataToDisplay.sort((a: any, b: any) => {
-            if (a.id < b.id) return -1;
-            return a.id > b.id ? 1 : 0;
-          });
-          this.sortCurrency = false;
-        } else {
-          this.dataToDisplay.sort((a: any, b: any) => {
-            if (a.id > b.id) return -1;
-            return a.id < b.id ? 1 : 0;
-          });
-          this.sortCurrency = true;
-        }
-        this.reloadFlatList();
-      }
-
-       sortByChange = () => {
-        this.reloadFlatList();
-        this.sortPrice = false;
-        this.sortCurrency = false;
-        if (this.sortChange) {
-          this.dataToDisplay.sort(function (a: any, b: any) { return b.change - a.change })
-         this.sortChange = false;
-        } else {
-          this.dataToDisplay.sort(function (a: any, b: any) { return a.change - b.change })
-          this.sortChange = true;
-        }
-        this.reloadFlatList();
-      }
-
-      notification: any = [];
-
-      async getNotification(){
-        const jsonValue = await AsyncStorage.getItem('@Notifications');
+    *getNotification(): any {
+        const jsonValue = yield AsyncStorage.getItem('@Notifications');
         const a = (jsonValue != null ? JSON.parse(jsonValue) : null);
-        this.setNotifications(a);
+        this.notification = a;
     }
 
-    setNotifications(value: any){
-        this.notification = value;
+    myValue: number = 0;
+
+    changeValue(value: number) {
+        if (value === this.myValue && value === 0) {
+            this.myValue = 3;
+        }
+        else if (value === this.myValue && value === 1) {
+            this.myValue = 4;
+        }
+        else if (value === this.myValue && value === 2) {
+            this.myValue = 5;
+        }
+        else {
+            this.myValue = value;
+        }
+    }
+
+    computedValue() {
+        if (this.myValue === 0) {
+            return this.dataToDisplay.slice().sort((a: any, b: any) => {
+                if (a.id < b.id) return -1;
+                return a.id > b.id ? 1 : 0;
+            });
+        }
+        if (this.myValue === 1) {
+            return this.dataToDisplay.slice().sort((a: any, b: any) => { return b.value - a.value });
+        }
+        if (this.myValue === 2) {
+            return this.dataToDisplay.slice().sort((a: any, b: any) => { return b.change - a.change });
+        }
+        if (this.myValue === 3) {
+            return this.dataToDisplay.slice().sort((a: any, b: any) => {
+                if (a.id > b.id) return -1;
+                return a.id < b.id ? 1 : 0;
+            });
+        }
+        if (this.myValue === 4) {
+            return this.dataToDisplay.slice().sort((a: any, b: any) => { return a.value - b.value });
+        }
+        if (this.myValue === 5) {
+            return this.dataToDisplay.slice().sort((a: any, b: any) => { return a.change - b.change });
+        }
     }
 }

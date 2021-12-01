@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, FlatList, View } from 'react-native';
+import { StyleSheet, FlatList, View, Alert, Text, RefreshControl } from 'react-native';
 import CurrencyItemOnMain from '../components/CurrencyItemOnMain';
 
 import { useStore } from '../store/store';
@@ -10,36 +10,28 @@ import { mainScreenColor } from '../constants/Colors';
 
 const TabOneScreen = (props: any) => {
   const { mainDataStore } = useStore();
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (!isDataLoaded) {
-      dataLoader();
+    dataLoader();
+  }, []);
+
+  useEffect(() => {
+    if (!mainDataStore.isEverythingFetching) {
+      mainDataStore.updateObservatedCurrency();
     }
-  }, [isDataLoaded])
+  }, [mainDataStore.isEverythingFetching, mainDataStore.updateObservatedCurrency])
 
- useEffect(() => {
-   if (!mainDataStore.isEverythingFetching){
-    mainDataStore.updateObservatedCurrency();
-   }   
- }, [mainDataStore.isEverythingFetching, mainDataStore.updateObservatedCurrencyArray])
-  
-const dataLoader = async () =>{
-  try {
-    await mainDataStore.fetchingDataOfTenLastDays('PLN', getDate(9), getDate(0));
-    setIsDataLoaded(true);
-  } catch (e) {
-    console.log(e, 'error in dataLoader');
+  const dataLoader = () => {
+    mainDataStore.fetchingDataOfTenLastDays('PLN', getDate(10), getDate(1)); //API has a problem with todays data (01.12.2021), so i fetch one day back
   }
-}
 
-const isTypeOfNan = (item: string) => {
-  if (item === 'NaN'){
-    return Number(0);
-  } else {
-    return Number(item);
+  const isTypeOfNan = (item: string) => {
+    if (item === 'NaN') {
+      return Number(0);
+    } else {
+      return Number(item);
+    }
   }
-}
 
   return (
     <>
@@ -47,28 +39,31 @@ const isTypeOfNan = (item: string) => {
         <TitleContainer />
       </View>
       <View style={styles.container}>
-          <View style={{backgroundColor: mainScreenColor }}>
-            <FlatList
-            onRefresh={() => {setIsDataLoaded(false);}}
-            refreshing={!isDataLoaded}
-              extraData={mainDataStore.flatListReload}
-              style={{ backgroundColor: mainScreenColor, marginBottom: 45 }}
-              contentContainerStyle={{alignItems: 'center', backgroundColor: mainScreenColor}}
-              data={mainDataStore.dataToDisplay}
-              keyExtractor={({ id }) => id}
-              renderItem={({ item }) => (
-                <CurrencyItemOnMain
-                  navigation={props.navigation}
-                  id={item.id}
-                  baseCurrency={mainDataStore.allInfoData.baseCurrency}
-                  value={item.value}
-                  change={isTypeOfNan(item.change)}
-                  positivea={isTypeOfNan(item.change) > 0 ? true : false}
-                  style={{}}
-                />
-              )}
-            />
-          </View>
+        <View style={{ backgroundColor: mainScreenColor }}>
+          <FlatList
+            refreshControl={
+              <RefreshControl
+                refreshing={mainDataStore.refreshing}
+                onRefresh={dataLoader}
+              />
+            }
+            style={{ backgroundColor: mainScreenColor, marginBottom: 45 }}
+            contentContainerStyle={{ alignItems: 'center', backgroundColor: mainScreenColor }}
+            data={mainDataStore.computedValue()}
+            keyExtractor={({ id }) => id}
+            renderItem={({ item }) => (
+              <CurrencyItemOnMain
+                navigation={props.navigation}
+                id={item.id}
+                baseCurrency={mainDataStore.allInfoData.baseCurrency}
+                value={item.value}
+                change={isTypeOfNan(item.change)}
+                positivea={isTypeOfNan(item.change) > 0 ? true : false}
+                style={{}}
+              />
+            )}
+          />
+        </View>
       </View>
     </>
   );
@@ -77,6 +72,12 @@ const isTypeOfNan = (item: string) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: mainScreenColor,
+    height: '100%'
+  },
+  noInternetInfo: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1
   },
   titlesContainer: {
     flexDirection: 'row',
