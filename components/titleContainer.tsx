@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { mainColor } from '../constants/Colors';
 import { useStore } from '../store/store';
 import TitleToSortBy from './TitleToSortBy';
 
@@ -10,17 +9,17 @@ const TitleContainer = () => {
     return (
         <View style={styles.container}>
             <TitleToSortBy
-                sortBy={() => mainDataStore.sortByCurrency()}
+                sortBy={() => mainDataStore.changeValue(0)}
                 title='Currency'
                 icon='sort'
             />
             <TitleToSortBy
-                sortBy={()=> mainDataStore.sortByPrice()}
+                sortBy={()=> mainDataStore.changeValue(1)}
                 title='Price'
                 icon='sort'
             />
             <TitleToSortBy
-                sortBy={() => mainDataStore.sortByChange()}
+                sortBy={() => mainDataStore.changeValue(2)}
                 title='24H Change'
                 icon='sort'
             />
